@@ -2070,7 +2070,7 @@ basic_ios& copyfmt(const basic_ios& rhs);
 \pnum
 \effects
 If
-\tcode{(this == \&rhs)}
+\tcode{(this == addressof(rhs))}
 does nothing.
 Otherwise assigns to the member objects of
 \tcode{*this}
@@ -7947,7 +7947,7 @@ explicit basic_istringstream(ios_base::openmode which);
 Constructs an object of class
 \tcode{basic_istringstream<charT, traits>},
 initializing the base class with
-\tcode{basic_istream<charT, traits>(\&sb)}\iref{istream}
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
 and initializing \tcode{sb} with
 \tcode{basic_string\-buf<charT, traits, Allocator>(which | ios_base::in)}\iref{stringbuf.cons}.
 \end{itemdescr}
@@ -7965,7 +7965,7 @@ explicit basic_istringstream(
 Constructs an object of class
 \tcode{basic_istringstream<charT, traits>},
 initializing the base class with
-\tcode{basic_istream<charT, traits>(\&sb)}\iref{istream}
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
 and initializing \tcode{sb} with
 \tcode{basic_string\-buf<charT, traits, Allocator>(str, which | ios_base::in)}\iref{stringbuf.cons}.
 \end{itemdescr}
@@ -8036,7 +8036,7 @@ basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 \begin{itemdescr}
 \pnum
 \returns
-\tcode{const_cast<basic_stringbuf<charT, traits, Allocator>*>(\&sb)}.
+\tcode{const_cast<basic_stringbuf<charT, traits, Allocator>*>(addressof(sb))}.
 \end{itemdescr}
 
 \indexlibrarymember{str}{basic_istringstream}%
@@ -8134,7 +8134,7 @@ explicit basic_ostringstream(ios_base::openmode which);
 Constructs an object of class
 \tcode{basic_ostringstream<charT, traits>},
 initializing the base class with
-\tcode{basic_ostream<charT, traits>(\&sb)}\iref{ostream}
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
 and initializing \tcode{sb} with
 \tcode{basic_string\-buf<charT, traits, Allocator>(which | ios_base::out)}\iref{stringbuf.cons}.
 \end{itemdescr}
@@ -8152,7 +8152,7 @@ explicit basic_ostringstream(
 Constructs an object of class
 \tcode{basic_ostringstream<charT, traits>},
 initializing the base class with
-\tcode{basic_ostream<charT, traits>(\&sb)}\iref{ostream}
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
 and initializing \tcode{sb} with
 \tcode{basic_string\-buf<charT, traits, Allocator>(str, which | ios_base::out)}\iref{stringbuf.cons}.
 \end{itemdescr}
@@ -8223,7 +8223,7 @@ basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 \begin{itemdescr}
 \pnum
 \returns
-\tcode{const_cast<basic_stringbuf<charT, traits, Allocator>*>(\&sb)}.
+\tcode{const_cast<basic_stringbuf<charT, traits, Allocator>*>(addressof(sb))}.
 \end{itemdescr}
 
 \indexlibrarymember{str}{basic_ostringstream}%
@@ -8322,7 +8322,7 @@ explicit basic_stringstream(ios_base::openmode which);
 Constructs an object of class
 \tcode{basic_stringstream<charT, traits>},
 initializing the base class with
-\tcode{basic_iostream<charT, traits>(\&sb)}\iref{iostream.cons}
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
 and initializing
 \tcode{sb}
 with
@@ -8342,7 +8342,7 @@ explicit basic_stringstream(
 Constructs an object of class
 \tcode{basic_stringstream<charT, traits>},
 initializing the base class with
-\tcode{basic_iostream<charT, traits>(\&sb)}\iref{iostream.cons}
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
 and initializing
 \tcode{sb}
 with
@@ -8359,7 +8359,7 @@ basic_stringstream(basic_stringstream&& rhs);
 \effects Move constructs from the rvalue \tcode{rhs}. This
 is accomplished by move constructing the base class, and the contained
 \tcode{basic_stringbuf}.
-Next \tcode{basic_istream<charT, traits>::set_rdbuf(\&sb)} is called to
+Next \tcode{basic_istream<charT, traits>::set_rdbuf(addressof(sb))} is called to
 install the contained \tcode{basic_stringbuf}.
 \end{itemdescr}
 
@@ -8415,7 +8415,7 @@ basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 \begin{itemdescr}
 \pnum
 \returns
-\tcode{const_cast<basic_stringbuf<charT, traits, Allocator>*>(\&sb)}
+\tcode{const_cast<basic_stringbuf<charT, traits, Allocator>*>(addressof(sb))}
 \end{itemdescr}
 
 \indexlibrarymember{str}{basic_stringstream}%
@@ -9356,7 +9356,7 @@ basic_ifstream();
 Constructs an object of class
 \tcode{basic_ifstream<charT, traits>},
 initializing the base class with
-\tcode{basic_istream<charT, traits>(\&sb)}\iref{istream.cons}
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream.cons}
 and initializing \tcode{sb} with
 \tcode{basic_filebuf<charT, traits>()}\iref{filebuf.cons}.
 \end{itemdescr}
@@ -9375,7 +9375,7 @@ explicit basic_ifstream(const filesystem::path::value_type* s,
 Constructs an object of class
 \tcode{basic_ifstream<charT, traits>},
 initializing the base class with
-\tcode{basic_istream<charT, traits>(\&sb)}\iref{istream.cons}
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream.cons}
 and initializing \tcode{sb} with
 \tcode{basic_filebuf<charT, traits>()}\iref{filebuf.cons},
 then calls
@@ -9407,7 +9407,7 @@ basic_ifstream(basic_ifstream&& rhs);
 \effects Move constructs from the rvalue \tcode{rhs}. This
 is accomplished by move constructing the base class, and the contained
 \tcode{basic_filebuf}. Next
-\tcode{basic_istream<charT, traits>::set_rdbuf(\&sb)} is called to install
+\tcode{basic_istream<charT, traits>::set_rdbuf(addressof(sb))} is called to install
 the contained \tcode{basic_filebuf}.
 \end{itemdescr}
 
@@ -9462,7 +9462,7 @@ basic_filebuf<charT, traits>* rdbuf() const;
 \begin{itemdescr}
 \pnum
 \returns
-\tcode{const_cast<basic_filebuf<charT, traits>*>(\&sb)}.
+\tcode{const_cast<basic_filebuf<charT, traits>*>(addressof(sb))}.
 \end{itemdescr}
 
 \indexlibrarymember{is_open}{basic_ifstream}%
@@ -9604,7 +9604,7 @@ basic_ofstream();
 Constructs an object of class
 \tcode{basic_ofstream<charT, traits>},
 initializing the base class with
-\tcode{basic_ostream<charT, traits>(\&sb)}\iref{ostream.cons}
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream.cons}
 and initializing \tcode{sb} with
 \tcode{basic_filebuf<charT, traits>()}\iref{filebuf.cons}.
 \end{itemdescr}
@@ -9623,7 +9623,7 @@ explicit basic_ofstream(const filesystem::path::value_type* s,
 Constructs an object of class
 \tcode{basic_ofstream<charT, traits>},
 initializing the base class with
-\tcode{basic_ostream<charT, traits>(\&sb)}\iref{ostream.cons}
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream.cons}
 and initializing \tcode{sb} with
 \tcode{basic_filebuf<charT, traits>()}\iref{filebuf.cons},
 then calls
@@ -9655,7 +9655,7 @@ basic_ofstream(basic_ofstream&& rhs);
 \effects Move constructs from the rvalue \tcode{rhs}. This
 is accomplished by move constructing the base class, and the contained
 \tcode{basic_filebuf}. Next
-\tcode{basic_ostream<charT, traits>::set_rdbuf(\&sb)} is called to install
+\tcode{basic_ostream<charT, traits>::set_rdbuf(addressof(sb))} is called to install
 the contained \tcode{basic_filebuf}.
 \end{itemdescr}
 
@@ -9710,7 +9710,7 @@ basic_filebuf<charT, traits>* rdbuf() const;
 \begin{itemdescr}
 \pnum
 \returns
-\tcode{const_cast<basic_filebuf<charT, traits>*>(\&sb)}.
+\tcode{const_cast<basic_filebuf<charT, traits>*>(addressof(sb))}.
 \end{itemdescr}
 
 \indexlibrarymember{is_open}{basic_ofstream}%
@@ -9861,7 +9861,7 @@ basic_fstream();
 Constructs an object of class
 \tcode{basic_fstream<charT, traits>},
 initializing the base class with
-\tcode{basic_iostream<charT, traits>(\&sb)}\iref{iostream.cons}
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
 and initializing
 \tcode{sb}
 with
@@ -9884,7 +9884,7 @@ explicit basic_fstream(
 Constructs an object of class
 \tcode{basic_fstream<charT, traits>},
 initializing the base class with
-\tcode{basic_iostream<charT, traits>(\&sb)}\iref{iostream.cons}
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
 and initializing
 \tcode{sb}
 with
@@ -9920,7 +9920,7 @@ basic_fstream(basic_fstream&& rhs);
 \effects Move constructs from the rvalue \tcode{rhs}. This
 is accomplished by move constructing the base class, and the contained
 \tcode{basic_filebuf}. Next
-\tcode{basic_istream<charT, traits>::set_rdbuf(\&sb)} is called to install
+\tcode{basic_istream<charT, traits>::set_rdbuf(addressof(sb))} is called to install
 the contained \tcode{basic_filebuf}.
 \end{itemdescr}
 
@@ -9975,7 +9975,7 @@ basic_filebuf<charT, traits>* rdbuf() const;
 \begin{itemdescr}
 \pnum
 \returns
-\tcode{const_cast<basic_filebuf<charT, traits>*>(\&sb)}.
+\tcode{const_cast<basic_filebuf<charT, traits>*>(addressof(sb))}.
 \end{itemdescr}
 
 \indexlibrarymember{is_open}{basic_fstream}%
@@ -10433,7 +10433,7 @@ namespace std {
     // \ref{syncstream.osyncstream.members}, member functions
     void emit();
     streambuf_type* get_wrapped() const noexcept;
-    syncbuf_type* rdbuf() const noexcept { return const_cast<syncbuf_type*>(&sb); }
+    syncbuf_type* rdbuf() const noexcept { return const_cast<syncbuf_type*>(addressof(sb)); }
 
   private:
     syncbuf_type sb;    // \expos
@@ -10479,7 +10479,7 @@ basic_osyncstream(streambuf_type* buf, const Allocator& allocator);
 \pnum
 \effects
 Initializes \tcode{sb} from \tcode{buf} and \tcode{allocator}.
-Initializes the base class with \tcode{basic_ostream(\&sb)}.
+Initializes the base class with \tcode{basic_ostream<charT, traits>(addressof(sb))}.
 
 \pnum
 \begin{note}
@@ -10503,7 +10503,7 @@ basic_osyncstream(basic_osyncstream&& other) noexcept;
 \effects
 Move constructs the base class
 and \tcode{sb} from the corresponding subobjects of \tcode{other},
-and calls \tcode{basic_ostream<charT, traits>::set_rdbuf(\&sb)}.
+and calls \tcode{basic_ostream<charT, traits>::set_rdbuf(addressof(sb))}.
 
 \pnum
 \ensures
