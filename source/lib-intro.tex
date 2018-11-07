@@ -2580,9 +2580,11 @@ library header.
 \pnum
 \indextext{unit!translation}%
 A translation unit shall not \tcode{\#define} or \tcode{\#undef}
-names lexically identical to keywords, to the identifiers listed in
-\tref{identifiers.special}, or to the \grammarterm{attribute-token}{s} described
-in~\ref{dcl.attr},
+names lexically identical
+to keywords,
+to the identifiers listed in \tref{identifiers.special},
+to the \grammarterm{attribute-token}{s} described in~\ref{dcl.attr}, or
+to the identifiers expects or ensures,
 except that the names \tcode{likely} and \tcode{unlikely} may be
 defined as function-like macros~\iref{cpp.replace}.
 
