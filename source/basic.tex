@@ -2646,23 +2646,20 @@ the same linkage, if any, as the name of the class of which it is a
 member.
 
 \pnum
-The name of a function declared in block scope and
-the name of a variable declared by a block scope \tcode{extern} declaration
-have linkage.
+A function declared in block scope or
+a variable declared by a block scope \tcode{extern} declaration
+is a member of the innermost enclosing namespace and
+its name has linkage.
 If such a declaration is attached to a named module,
 the program is ill-formed.
-If there is a visible declaration
-of an entity with linkage, ignoring entities declared
-outside the innermost enclosing namespace scope,
+If there is a prior declaration of that name in that namespace,
 such that the block scope declaration would be
 a (possibly ill-formed) redeclaration
 if the two declarations appeared in the same declarative region,
-the block scope declaration declares
-that same entity and receives the linkage of the previous declaration. If there is more
-than one such matching entity, the program is ill-formed. Otherwise, if no matching
-entity is found, the block scope entity receives external linkage.
-If, within a translation unit, the same entity is declared with both
-internal and external linkage, the program is ill-formed.
+the block scope declaration declares that same entity and
+its name receives the linkage of the previous declaration.
+Otherwise, the block scope entity receives
+the linkage of the innermost enclosing namespace.
 \begin{example}
 \begin{codeblock}
 static void f();
@@ -2671,38 +2668,39 @@ static int i = 0;               // \#1
 void g() {
   extern void f();              // internal linkage
   extern void h();              // C language linkage
+  extern void k();              // \tcode{::k}, external linkage
   int i;                        // \#2: \tcode{i} has no linkage
   {
     extern void f();            // internal linkage
-    extern int i;               // \#3: external linkage, ill-formed
+    extern int i;               // \#3: internal linkage
   }
 }
 \end{codeblock}
 
-Without the declaration at line \#2,
-the declaration at line \#3 would link with the declaration at line \#1.
-Because the declaration with internal linkage is hidden, however,
-\#3 is given external linkage, making the program ill-formed.
+Even though the declaration at line \#2 hides the declaration at line \#1,
+the declaration at line \#3 still redeclares \#1 and receives internal linkage.
 \end{example}
 
 \pnum
-When a block scope declaration of an entity with linkage is not found to
-refer to some other declaration, then that entity is a member of the
-innermost enclosing namespace. However such a declaration does not
-introduce the member name in its namespace scope. \begin{example}
+A block scope declaration of an entity with linkage
+does not by itself make the member name
+visible to any form of name lookup in its namespace scope or
+eligible for declaration by \grammarterm{qualified-id}. \begin{example}
 
 \begin{codeblock}
 namespace X {
   void p() {
     q();                        // error: \tcode{q} not yet declared
     extern void q();            // \tcode{q} is a member of namespace \tcode{X}
+    extern void r();            // \tcode{r} is a member of namespace \tcode{X}
   }
 
   void middle() {
-    q();                        // error: \tcode{q} not yet declared
+    q();                        // error: \tcode{q} not visible to name lookup
   }
 
   void q() { @\commentellip@ }        // definition of \tcode{X::q}
+  void X::r() { @\commentellip@ }     // error: \tcode{r} cannot be declared by \grammarterm{qualified-id}
 }
 
 void q() { @\commentellip@ }          // some other, unrelated \tcode{q}
