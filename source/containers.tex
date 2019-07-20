@@ -10413,7 +10413,7 @@ constexpr span() noexcept;
 \pnum
 \remarks
 This constructor shall not participate in overload resolution
-unless \tcode{Extent <= 0} is \tcode{true}.
+unless \tcode{Extent == dynamic_extent || Extent == 0} is \tcode{true}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{span}!constructor}%
