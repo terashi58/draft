@@ -262,6 +262,7 @@ The class templates
 \tcode{for_each_result},
 \tcode{minmax_result},
 \tcode{mismatch_result},
+\tcode{next_permutation_result},
 \tcode{copy_result}, and
 \tcode{partition_copy_result}
 have the template parameters, data members, and special members specified above.
@@ -2744,15 +2745,21 @@ namespace std {
                                     BidirectionalIterator last, Compare comp);
 
   namespace ranges {
+    template<class I>
+    struct next_permutation_result {
+      bool found;
+      I in;
+    };
+
     template<BidirectionalIterator I, Sentinel<I> S, class Comp = ranges::less<>,
              class Proj = identity>
       requires Sortable<I, Comp, Proj>
-      constexpr bool
+      constexpr next_permutation_result<I>
         next_permutation(I first, S last, Comp comp = {}, Proj proj = {});
     template<BidirectionalRange R, class Comp = ranges::less<>,
              class Proj = identity>
       requires Sortable<iterator_t<R>, Comp, Proj>
-      constexpr bool
+      constexpr next_permutation_result<safe_iterator_t<R>>
         next_permutation(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2764,15 +2771,18 @@ namespace std {
                                     BidirectionalIterator last, Compare comp);
 
   namespace ranges {
+    template<class I>
+    using prev_permutation_result = next_permutation_result<I>;
+
     template<BidirectionalIterator I, Sentinel<I> S, class Comp = ranges::less<>,
              class Proj = identity>
       requires Sortable<I, Comp, Proj>
-      constexpr bool
+      constexpr prev_permutation_result<I>
         prev_permutation(I first, S last, Comp comp = {}, Proj proj = {});
     template<BidirectionalRange R, class Comp = ranges::less<>,
              class Proj = identity>
       requires Sortable<iterator_t<R>, Comp, Proj>
-      constexpr bool
+      constexpr prev_permutation_result<safe_iterator_t<R>>
         prev_permutation(R&& r, Comp comp = {}, Proj proj = {});
   }
 }
@@ -8483,12 +8493,12 @@ namespace ranges {
   template<BidirectionalIterator I, Sentinel<I> S, class Comp = ranges::less<>,
            class Proj = identity>
     requires Sortable<I, Comp, Proj>
-    constexpr bool
+    constexpr next_permutation_result<I>
       next_permutation(I first, S last, Comp comp = {}, Proj proj = {});
   template<BidirectionalRange R, class Comp = ranges::less<>,
            class Proj = identity>
     requires Sortable<iterator_t<R>, Comp, Proj>
-    constexpr bool
+    constexpr next_permutation_result<safe_iterator_t<R>>
       next_permutation(R&& r, Comp comp = {}, Proj proj = {});
 }
 \end{itemdecl}
@@ -8517,7 +8527,13 @@ that is, the ascendingly-sorted one.
 
 \pnum
 \returns
-\tcode{true} if and only if a next permutation was found.
+Let \tcode{B} be \tcode{true} if a next permutation was found and
+otherwise \tcode{false}.
+Returns:
+\begin{itemize}
+\item \tcode{B} for the overloads in namespace \tcode{std}, or
+\item \tcode{\{ B, last \}} for the overloads in namespace \tcode{ranges}.
+\end{itemize}
 
 \pnum
 \complexity
@@ -8538,12 +8554,12 @@ namespace ranges {
   template<BidirectionalIterator I, Sentinel<I> S, class Comp = ranges::less<>,
            class Proj = identity>
     requires Sortable<I, Comp, Proj>
-    constexpr bool
+    constexpr prev_permutation_result<I>
       prev_permutation(I first, S last, Comp comp = {}, Proj proj = {});
   template<BidirectionalRange R, class Comp = ranges::less<>,
            class Proj = identity>
     requires Sortable<iterator_t<R>, Comp, Proj>
-    constexpr bool
+    constexpr prev_permutation_result<safe_iterator_t<R>>
       prev_permutation(R&& r, Comp comp = {}, Proj proj = {});
 }
 \end{itemdecl}
@@ -8572,7 +8588,13 @@ that is, the descendingly-sorted one.
 
 \pnum
 \returns
-\tcode{true} if and only if a previous permutation was found.
+Let \tcode{B} be \tcode{true} if a next permutation was found and
+otherwise \tcode{false}.
+Returns:
+\begin{itemize}
+\item \tcode{B} for the overloads in namespace \tcode{std}, or
+\item \tcode{\{ B, last \}} for the overloads in namespace \tcode{ranges}.
+\end{itemize}
 
 \pnum
 \complexity
