@@ -1452,19 +1452,19 @@ namespace std {
   namespace ranges {
     template<Permutable I, Sentinel<I> S, class T, class Proj = identity>
       requires IndirectRelation<ranges::equal_to<>, projected<I, Proj>, const T*>
-      constexpr I remove(I first, S last, const T& value, Proj proj = {});
+      constexpr subrange<I> remove(I first, S last, const T& value, Proj proj = {});
     template<ForwardRange R, class T, class Proj = identity>
       requires Permutable<iterator_t<R>> &&
                IndirectRelation<ranges::equal_to<>, projected<iterator_t<R>, Proj>, const T*>
-      constexpr safe_iterator_t<R>
+      constexpr safe_subrange_t<R>
         remove(R&& r, const T& value, Proj proj = {});
     template<Permutable I, Sentinel<I> S, class Proj = identity,
              IndirectUnaryPredicate<projected<I, Proj>> Pred>
-      constexpr I remove_if(I first, S last, Pred pred, Proj proj = {});
+      constexpr subrange<I> remove_if(I first, S last, Pred pred, Proj proj = {});
     template<ForwardRange R, class Proj = identity,
              IndirectUnaryPredicate<projected<iterator_t<R>, Proj>> Pred>
       requires Permutable<iterator_t<R>>
-      constexpr safe_iterator_t<R>
+      constexpr safe_subrange_t<R>
         remove_if(R&& r, Pred pred, Proj proj = {});
   }
 
@@ -1537,11 +1537,11 @@ namespace std {
   namespace ranges {
     template<Permutable I, Sentinel<I> S, class Proj = identity,
              IndirectRelation<projected<I, Proj>> C = ranges::equal_to<>>
-      constexpr I unique(I first, S last, C comp = {}, Proj proj = {});
+      constexpr subrange<I> unique(I first, S last, C comp = {}, Proj proj = {});
     template<ForwardRange R, class Proj = identity,
              IndirectRelation<projected<iterator_t<R>, Proj>> C = ranges::equal_to<>>
       requires Permutable<iterator_t<R>>
-      constexpr safe_iterator_t<R>
+      constexpr safe_subrange_t<R>
         unique(R&& r, C comp = {}, Proj proj = {});
   }
 
@@ -1826,11 +1826,13 @@ namespace std {
                         Compare comp);
 
   namespace ranges {
+    template<class I, class O> using partial_sort_copy_result = copy_result<I, O>;
+
     template<InputIterator I1, Sentinel<I1> S1, RandomAccessIterator I2, Sentinel<I2> S2,
              class Comp = ranges::less<>, class Proj1 = identity, class Proj2 = identity>
       requires IndirectlyCopyable<I1, I2> && Sortable<I2, Comp, Proj2> &&
                IndirectStrictWeakOrder<Comp, projected<I1, Proj1>, projected<I2, Proj2>>
-      constexpr I2
+      constexpr partial_sort_copy_result<I1, I2>
         partial_sort_copy(I1 first, S1 last, I2 result_first, S2 result_last,
                           Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
     template<InputRange R1, RandomAccessRange R2, class Comp = ranges::less<>,
@@ -1839,7 +1841,7 @@ namespace std {
                Sortable<iterator_t<R2>, Comp, Proj2> &&
                IndirectStrictWeakOrder<Comp, projected<iterator_t<R1>, Proj1>,
                                        projected<iterator_t<R2>, Proj2>>
-      constexpr safe_iterator_t<R2>
+      constexpr partial_sort_copy_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
         partial_sort_copy(R1&& r, R2&& result_r, Comp comp = {},
                           Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -2034,12 +2036,12 @@ namespace std {
   namespace ranges {
     template<Permutable I, Sentinel<I> S, class Proj = identity,
              IndirectUnaryPredicate<projected<I, Proj>> Pred>
-      constexpr I
+      constexpr subrange<I>
         partition(I first, S last, Pred pred, Proj proj = {});
     template<ForwardRange R, class Proj = identity,
              IndirectUnaryPredicate<projected<iterator_t<R>, Proj>> Pred>
       requires Permutable<iterator_t<R>>
-      constexpr safe_iterator_t<R>
+      constexpr safe_subrange_t<R>
         partition(R&& r, Pred pred, Proj proj = {});
   }
 
@@ -2057,11 +2059,11 @@ namespace std {
     template<BidirectionalIterator I, Sentinel<I> S, class Proj = identity,
              IndirectUnaryPredicate<projected<I, Proj>> Pred>
       requires Permutable<I>
-      I stable_partition(I first, S last, Pred pred, Proj proj = {});
+      subrange<I> stable_partition(I first, S last, Pred pred, Proj proj = {});
     template<BidirectionalRange R, class Proj = identity,
              IndirectUnaryPredicate<projected<iterator_t<R>, Proj>> Pred>
       requires Permutable<iterator_t<R>>
-      safe_iterator_t<R> stable_partition(R&& r, Pred pred, Proj proj = {});
+      safe_subrange_t<R> stable_partition(R&& r, Pred pred, Proj proj = {});
   }
 
   template<class InputIterator, class OutputIterator1,
@@ -4917,19 +4919,19 @@ template<class ExecutionPolicy, class ForwardIterator, class Predicate>
 namespace ranges {
   template<Permutable I, Sentinel<I> S, class T, class Proj = identity>
     requires IndirectRelation<ranges::equal_to<>, projected<I, Proj>, const T*>
-    constexpr I remove(I first, S last, const T& value, Proj proj = {});
+    constexpr subrange<I> remove(I first, S last, const T& value, Proj proj = {});
   template<ForwardRange R, class T, class Proj = identity>
     requires Permutable<iterator_t<R>> &&
              IndirectRelation<ranges::equal_to<>, projected<iterator_t<R>, Proj>, const T*>
-    constexpr safe_iterator_t<R>
+    constexpr safe_subrange_t<R>
       remove(R&& r, const T& value, Proj proj = {});
   template<Permutable I, Sentinel<I> S, class Proj = identity,
            IndirectUnaryPredicate<projected<I, Proj>> Pred>
-    constexpr I remove_if(I first, S last, Pred pred, Proj proj = {});
+    constexpr subrange<I> remove_if(I first, S last, Pred pred, Proj proj = {});
   template<ForwardRange R, class Proj = identity,
            IndirectUnaryPredicate<projected<iterator_t<R>, Proj>> Pred>
     requires Permutable<iterator_t<R>>
-    constexpr safe_iterator_t<R>
+    constexpr safe_subrange_t<R>
       remove_if(R&& r, Pred pred, Proj proj = {});
 }
 \end{itemdecl}
@@ -4957,7 +4959,11 @@ in the range \range{first}{last} for which $E$ holds.
 
 \pnum
 \returns
-The end of the resulting range.
+Let $j$ be the end of the resulting range. Returns:
+\begin{itemize}
+\item $j$ for the overloads in namespace \tcode{std}, or
+\item \tcode{\{$j$, last\}} for the overloads in namespace \tcode{ranges}.
+\end{itemize}
 
 \pnum
 \remarks
@@ -5096,11 +5102,11 @@ template<class ExecutionPolicy, class ForwardIterator, class BinaryPredicate>
 namespace ranges {
   template<Permutable I, Sentinel<I> S, class Proj = identity,
            IndirectRelation<projected<I, Proj>> C = ranges::equal_to<>>
-    constexpr I unique(I first, S last, C comp = {}, Proj proj = {});
+    constexpr subrange<I> unique(I first, S last, C comp = {}, Proj proj = {});
   template<ForwardRange R, class Proj = identity,
            IndirectRelation<projected<iterator_t<R>, Proj>> C = ranges::equal_to<>>
     requires Permutable<iterator_t<R>>
-    constexpr safe_iterator_t<R>
+    constexpr safe_subrange_t<R>
       unique(R&& r, C comp = {}, Proj proj = {});
 }
 \end{itemdecl}
@@ -5136,7 +5142,11 @@ for which $E$ is \tcode{true}.
 
 \pnum
 \returns
-The end of the resulting range.
+Let $j$ be the end of the resulting range. Returns:
+\begin{itemize}
+\item $j$ for the overloads in namespace \tcode{std}, or
+\item \tcode{\{$j$, last\}} for the overloads in namespace \tcode{ranges}.
+\end{itemize}
 
 \pnum
 \complexity
@@ -6042,7 +6052,7 @@ namespace ranges {
            class Comp = ranges::less<>, class Proj1 = identity, class Proj2 = identity>
     requires IndirectlyCopyable<I1, I2> && Sortable<I2, Comp, Proj2> &&
              IndirectStrictWeakOrder<Comp, projected<I1, Proj1>, projected<I2, Proj2>>
-    constexpr I2
+    constexpr partial_sort_copy_result<I1, I2>
       partial_sort_copy(I1 first, S1 last, I2 result_first, S2 result_last,
                         Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
   template<InputRange R1, RandomAccessRange R2, class Comp = ranges::less<>,
@@ -6051,7 +6061,7 @@ namespace ranges {
              Sortable<iterator_t<R2>, Comp, Proj2> &&
              IndirectStrictWeakOrder<Comp, projected<iterator_t<R1>, Proj1>,
                                      projected<iterator_t<R2>, Proj2>>
-    constexpr safe_iterator_t<R2>
+    constexpr partial_sort_copy_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
       partial_sort_copy(R1&& r, R2&& result_r, Comp comp = {},
                         Proj1 proj1 = {}, Proj2 proj2 = {});
 }
@@ -6100,7 +6110,13 @@ into the range \range{result_first}{result_first + $N$}.
 
 \pnum
 \returns
-\tcode{result_first + $N$}.
+\begin{itemize}
+\item
+  \tcode{result_first + $N$} for the overloads in namespace \tcode{std}, or
+\item
+  \tcode{\{last, result_first + $N$\}} for
+  the overloads in namespace \tcode{ranges}.
+\end{itemize}
 
 \pnum
 \complexity
@@ -6605,12 +6621,12 @@ template<class ExecutionPolicy, class ForwardIterator, class Predicate>
 namespace ranges {
   template<Permutable I, Sentinel<I> S, class Proj = identity,
            IndirectUnaryPredicate<projected<I, Proj>> Pred>
-    constexpr I
+    constexpr subrange<I>
       partition(I first, S last, Pred pred, Proj proj = {});
   template<ForwardRange R, class Proj = identity,
            IndirectUnaryPredicate<projected<iterator_t<R>, Proj>> Pred>
     requires Permutable<iterator_t<R>>
-    constexpr safe_iterator_t<R>
+    constexpr safe_subrange_t<R>
       partition(R&& r, Pred pred, Proj proj = {});
 }
 \end{itemdecl}
@@ -6634,9 +6650,15 @@ that satisfy $E(\tcode{e})$ before all the elements that do not.
 
 \pnum
 \returns
-An iterator \tcode{i} such that $E(\tcode{*j})$ is
+Let \tcode{i} be an iterator such that $E(\tcode{*j})$ is
 \tcode{true} for every iterator \tcode{j} in \range{first}{i} and
 \tcode{false} for every iterator \tcode{j} in \range{i}{last}.
+Returns:
+\begin{itemize}
+\item \tcode{i} for the overloads in namespace \tcode{std}, or
+\item \tcode{\{i, last\}} for the overloads in namespace \tcode{ranges}.
+\end{itemize}
+
 
 \pnum
 \complexity Let $N = \tcode{last - first}$:
@@ -6671,11 +6693,11 @@ namespace ranges {
   template<BidirectionalIterator I, Sentinel<I> S, class Proj = identity,
            IndirectUnaryPredicate<projected<I, Proj>> Pred>
     requires Permutable<I>
-    I stable_partition(I first, S last, Pred pred, Proj proj = {});
+    subrange<I> stable_partition(I first, S last, Pred pred, Proj proj = {});
   template<BidirectionalRange R, class Proj = identity,
            IndirectUnaryPredicate<projected<iterator_t<R>, Proj>> Pred>
     requires Permutable<iterator_t<R>>
-    safe_iterator_t<R> stable_partition(R&& r, Pred pred, Proj proj = {});
+    safe_subrange_t<R> stable_partition(R&& r, Pred pred, Proj proj = {});
 }
 \end{itemdecl}
 
@@ -6701,11 +6723,17 @@ The relative order of the elements in both groups is preserved.
 
 \pnum
 \returns
-An iterator \tcode{i}
+Let \tcode{i} be an iterator
 such that for every iterator \tcode{j} in \range{first}{i},
 $E(\tcode{*j})$ is \tcode{true},
 and for every iterator \tcode{j} in the range \range{i}{last},
-$E(\tcode{*j})$ is \tcode{false},
+$E(\tcode{*j})$ is \tcode{false}.
+Returns:
+\begin{itemize}
+\item \tcode{i} for the overloads in namespace \tcode{std}, or
+\item \tcode{\{i, last\}} for the overloads in namespace \tcode{ranges}.
+\end{itemize}
+
 
 \pnum
 \complexity
