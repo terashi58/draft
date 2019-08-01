@@ -20078,7 +20078,7 @@ The same as \tcode{p}.
 In the description of the functions, operator \tcode{+} is used
 for some of the iterator categories for which it does not have to be defined.
 In these cases the semantics of \tcode{a + n} are
-the same as in \ref{algorithm.requirements}.
+the same as in \ref{algorithms.requirements}.
 
 \indexlibrary{\idxcode{format}}%
 \begin{itemdecl}
@@ -20208,7 +20208,7 @@ Let
 \expects
 \tcode{Out} models \tcode{OutputIterator<const charT\&>}, and
 \tcode{formatter<}$\tcode{T}_i$\tcode{, charT>}
-meets the \oldconcept[]{Formatter} requirements
+meets the \newoldconcept{Formatter} requirements
 for each $\tcode{T}_i$ in \tcode{Args}.
 
 \pnum
@@ -20242,7 +20242,7 @@ Let \tcode{charT} be \tcode{decltype(fmt)::value_type}.
 \pnum
 \expects
 \tcode{formatter<}$\tcode{T}_i$\tcode{, charT>}
-meets the \oldconcept[]{Formatter} requirements
+meets the \newoldconcept{Formatter} requirements
 for each $\tcode{T}_i$ in \tcode{Args}.
 
 \pnum
@@ -20270,7 +20270,7 @@ Let \tcode{charT} be either \tcode{char} or \tcode{wchar_t}.
 Each specialization of \tcode{formatter} is either enabled or disabled,
 as described below.
 \begin{note}
-Enabled specializations meet the \oldconcept[]{Formatter} requirements,
+Enabled specializations meet the \newoldconcept{Formatter} requirements,
 and disabled specializations do not.
 \end{note}
 Each header that declares the template \tcode{formatter}
@@ -20348,7 +20348,7 @@ values are \tcode{false}:
 
 \pnum
 An enabled specialization \tcode{formatter<T, charT>} meets the
-\oldconcept[]{Formatter} requirements.
+\newoldconcept{Formatter} requirements.
 \begin{example}
 \begin{codeblock}
 #include <format>
@@ -20374,7 +20374,8 @@ std::string s3 = std::format("{}", err{});      // ill-formed: disabled formatte
 \rSec3[formatter.requirements]{Formatter requirements}
 
 \pnum
-A type \tcode{F} meets the \oldconceptdefn[]{Formatter} requirements if:
+\indextext{requirements!\idxnewoldconcept{Formatter}}%
+A type \tcode{F} meets the \newoldconceptdefn{Formatter} requirements if:
 
 \begin{itemize}
 \item
@@ -20416,7 +20417,7 @@ If \fmtgrammarterm{format-spec} is empty then either
 \tcode{pc.begin() == pc.end()} or
 \tcode{*pc.begin() == '\}'}.
 
-\begin{concepttable}{\oldconcept[]{Formatter} requirements}{formatter}
+\begin{concepttable}{\newoldconcept{Formatter} requirements}{formatter}
 {p{1.2in}p{1in}p{2.9in}}
 \topline
 \hdstyle{Expression} & \hdstyle{Return type} & \hdstyle{Requirement} \\ \capsep
@@ -21039,7 +21040,7 @@ template<class Context = format_context, class... Args>
 \pnum
 \expects
 \tcode{typename Context::template formatter_type<}$\tcode{T}_i$\tcode{>}
-meets the \oldconcept[]{Formatter} requirements
+meets the \newoldconcept{Formatter} requirements
 for each $\tcode{T}_i$ in \tcode{Args}.
 
 \pnum
