@@ -2717,7 +2717,7 @@ template<typename T> concept C2 = requires(T x) {
 The \grammarterm{compound-requirement} in \tcode{C2}
 requires that \tcode{*x} is a valid expression,
 that \tcode{typename T::inner} is a valid type, and
-that \tcode{same_as<decltype((*x)), typename T::inner>} is satisfied.
+that \tcode{\libconcept{same_as}<decltype((*x)), typename T::inner>} is satisfied.
 
 \begin{codeblock}
 template<typename T> concept C3 =
