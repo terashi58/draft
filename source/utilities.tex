@@ -6683,9 +6683,9 @@ namespace std {
   template<class T1, class D1, class T2, class D2>
     requires three_way_comparable_with<typename unique_ptr<T1, D1>::pointer,
                                        typename unique_ptr<T2, D2>::pointer>
-    compare_three_way_result_t<typename unique_ptr<T1, D1>::pointer,
-                               typename unique_ptr<T2, D2>::pointer>
-      operator<=>(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
+      compare_three_way_result_t<typename unique_ptr<T1, D1>::pointer,
+                                 typename unique_ptr<T2, D2>::pointer>
+        operator<=>(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
 
   template<class T, class D>
     bool operator==(const unique_ptr<T, D>& x, nullptr_t) noexcept;
@@ -6707,8 +6707,8 @@ namespace std {
     bool operator>=(nullptr_t, const unique_ptr<T, D>& y);
   template<class T, class D>
     requires three_way_comparable_with<typename unique_ptr<T, D>::pointer, nullptr_t>
-    compare_three_way_result_t<typename unique_ptr<T, D>::pointer, nullptr_t>
-      operator<=>(const unique_ptr<T, D>& x, nullptr_t);
+      compare_three_way_result_t<typename unique_ptr<T, D>::pointer, nullptr_t>
+        operator<=>(const unique_ptr<T, D>& x, nullptr_t);
 
   template<class E, class T, class Y, class D>
     basic_ostream<E, T>& operator<<(basic_ostream<E, T>& os, const unique_ptr<Y, D>& p);
@@ -8043,11 +8043,11 @@ for (; first != last; ++first)
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-forward-iterator}@ I, @\placeholdernc{no-throw-sentinel}@<I> S>
-      requires default_constructible<iter_value_t<I>>
-    I uninitialized_default_construct(I first, S last);
+    requires default_constructible<iter_value_t<I>>
+      I uninitialized_default_construct(I first, S last);
   template<@\placeholdernc{no-throw-forward-range}@ R>
-      requires default_constructible<range_value_t<R>>
-    safe_iterator_t<R> uninitialized_default_construct(R&& r);
+    requires default_constructible<range_value_t<R>>
+      safe_iterator_t<R> uninitialized_default_construct(R&& r);
 }
 \end{itemdecl}
 
@@ -8083,8 +8083,8 @@ return first;
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-forward-iterator}@ I>
-      requires default_constructible<iter_value_t<I>>
-    I uninitialized_default_construct_n(I first, iter_difference_t<I> n);
+    requires default_constructible<iter_value_t<I>>
+      I uninitialized_default_construct_n(I first, iter_difference_t<I> n);
 }
 \end{itemdecl}
 
@@ -8120,11 +8120,11 @@ for (; first != last; ++first)
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-forward-iterator}@ I, @\placeholdernc{no-throw-sentinel}@<I> S>
-      requires default_constructible<iter_value_t<I>>
-    I uninitialized_value_construct(I first, S last);
+    requires default_constructible<iter_value_t<I>>
+      I uninitialized_value_construct(I first, S last);
   template<@\placeholdernc{no-throw-forward-range}@ R>
-      requires default_constructible<range_value_t<R>>
-    safe_iterator_t<R> uninitialized_value_construct(R&& r);
+    requires default_constructible<range_value_t<R>>
+      safe_iterator_t<R> uninitialized_value_construct(R&& r);
 }
 \end{itemdecl}
 
@@ -8160,8 +8160,8 @@ return first;
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-forward-iterator}@ I>
-      requires default_constructible<iter_value_t<I>>
-    I uninitialized_value_construct_n(I first, iter_difference_t<I> n);
+    requires default_constructible<iter_value_t<I>>
+      I uninitialized_value_construct_n(I first, iter_difference_t<I> n);
 }
 \end{itemdecl}
 
@@ -8207,13 +8207,13 @@ for (; first != last; ++result, (void) ++first)
 namespace ranges {
   template<input_iterator I, sentinel_for<I> S1,
            @\placeholdernc{no-throw-forward-iterator}@ O, @\placeholdernc{no-throw-sentinel}@<O> S2>
-      requires constructible_from<iter_value_t<O>, iter_reference_t<I>>
-    uninitialized_copy_result<I, O>
-      uninitialized_copy(I ifirst, S1 ilast, O ofirst, S2 olast);
+    requires constructible_from<iter_value_t<O>, iter_reference_t<I>>
+      uninitialized_copy_result<I, O>
+        uninitialized_copy(I ifirst, S1 ilast, O ofirst, S2 olast);
   template<input_range IR, @\placeholdernc{no-throw-forward-range}@ OR>
-      requires constructible_from<range_value_t<OR>, range_reference_t<IR>>
-    uninitialized_copy_result<safe_iterator_t<IR>, safe_iterator_t<OR>>
-      uninitialized_copy(IR&& in_range, OR&& out_range);
+    requires constructible_from<range_value_t<OR>, range_reference_t<IR>>
+      uninitialized_copy_result<safe_iterator_t<IR>, safe_iterator_t<OR>>
+        uninitialized_copy(IR&& in_range, OR&& out_range);
 }
 \end{itemdecl}
 
@@ -8261,9 +8261,9 @@ for ( ; n > 0; ++result, (void) ++first, --n) {
 \begin{itemdecl}
 namespace ranges {
   template<input_iterator I, @\placeholdernc{no-throw-forward-iterator}@ O, @\placeholdernc{no-throw-sentinel}@<O> S>
-      requires constructible_from<iter_value_t<O>, iter_reference_t<I>>
-    uninitialized_copy_n_result<I, O>
-      uninitialized_copy_n(I ifirst, iter_difference_t<I> n, O ofirst, S olast);
+    requires constructible_from<iter_value_t<O>, iter_reference_t<I>>
+      uninitialized_copy_n_result<I, O>
+        uninitialized_copy_n(I ifirst, iter_difference_t<I> n, O ofirst, S olast);
 }
 \end{itemdecl}
 
@@ -8312,13 +8312,13 @@ return result;
 namespace ranges {
   template<input_iterator I, sentinel_for<I> S1,
            @\placeholdernc{no-throw-forward-iterator}@ O, @\placeholdernc{no-throw-sentinel}@<O> S2>
-      requires constructible_from<iter_value_t<O>, iter_rvalue_reference_t<I>>
-    uninitialized_move_result<I, O>
-      uninitialized_move(I ifirst, S1 ilast, O ofirst, S2 olast);
+    requires constructible_from<iter_value_t<O>, iter_rvalue_reference_t<I>>
+      uninitialized_move_result<I, O>
+        uninitialized_move(I ifirst, S1 ilast, O ofirst, S2 olast);
   template<input_range IR, @\placeholdernc{no-throw-forward-range}@ OR>
-      requires constructible_from<range_value_t<OR>, range_rvalue_reference_t<IR>>
-    uninitialized_move_result<safe_iterator_t<IR>, safe_iterator_t<OR>>
-      uninitialized_move(IR&& in_range, OR&& out_range);
+    requires constructible_from<range_value_t<OR>, range_rvalue_reference_t<IR>>
+      uninitialized_move_result<safe_iterator_t<IR>, safe_iterator_t<OR>>
+        uninitialized_move(IR&& in_range, OR&& out_range);
 }
 \end{itemdecl}
 
@@ -8371,9 +8371,9 @@ return {first,result};
 \begin{itemdecl}
 namespace ranges {
   template<input_iterator I, @\placeholdernc{no-throw-forward-iterator}@ O, @\placeholdernc{no-throw-sentinel}@<O> S>
-      requires constructible_from<iter_value_t<O>, iter_rvalue_reference_t<I>>
-    uninitialized_move_n_result<I, O>
-      uninitialized_move_n(I ifirst, iter_difference_t<I> n, O ofirst, S olast);
+    requires constructible_from<iter_value_t<O>, iter_rvalue_reference_t<I>>
+      uninitialized_move_n_result<I, O>
+        uninitialized_move_n(I ifirst, iter_difference_t<I> n, O ofirst, S olast);
 }
 \end{itemdecl}
 
@@ -8422,11 +8422,11 @@ for (; first != last; ++first)
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-forward-iterator}@ I, @\placeholdernc{no-throw-sentinel}@<I> S, class T>
-      requires constructible_from<iter_value_t<I>, const T&>
-    I uninitialized_fill(I first, S last, const T& x);
+    requires constructible_from<iter_value_t<I>, const T&>
+      I uninitialized_fill(I first, S last, const T& x);
   template<@\placeholdernc{no-throw-forward-range}@ R, class T>
-      requires constructible_from<range_value_t<R>, const T&>
-    safe_iterator_t<R> uninitialized_fill(R&& r, const T& x);
+    requires constructible_from<range_value_t<R>, const T&>
+      safe_iterator_t<R> uninitialized_fill(R&& r, const T& x);
 }
 \end{itemdecl}
 
@@ -8462,8 +8462,8 @@ return first;
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-forward-iterator}@ I, class T>
-      requires constructible_from<iter_value_t<I>, const T&>
-    I uninitialized_fill_n(I first, iter_difference_t<I> n, const T& x);
+    requires constructible_from<iter_value_t<I>, const T&>
+      I uninitialized_fill_n(I first, iter_difference_t<I> n, const T& x);
 }
 \end{itemdecl}
 
@@ -8545,11 +8545,11 @@ for (; first!=last; ++first)
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-input-iterator}@ I, @\placeholdernc{no-throw-sentinel}@<I> S>
-      requires destructible<iter_value_t<I>>
-    constexpr I destroy(I first, S last) noexcept;
+    requires destructible<iter_value_t<I>>
+      constexpr I destroy(I first, S last) noexcept;
   template<@\placeholdernc{no-throw-input-range}@ R>
-      requires destructible<range_value_t<R>>
-    constexpr safe_iterator_t<R> destroy(R&& r) noexcept;
+    requires destructible<range_value_t<R>>
+      constexpr safe_iterator_t<R> destroy(R&& r) noexcept;
 }
 \end{itemdecl}
 
@@ -8584,8 +8584,8 @@ return first;
 \begin{itemdecl}
 namespace ranges {
   template<@\placeholdernc{no-throw-input-iterator}@ I>
-      requires destructible<iter_value_t<I>>
-    constexpr I destroy_n(I first, iter_difference_t<I> n) noexcept;
+    requires destructible<iter_value_t<I>>
+      constexpr I destroy_n(I first, iter_difference_t<I> n) noexcept;
 }
 \end{itemdecl}
 
@@ -9677,9 +9677,9 @@ template<class T1, class D1, class T2, class D2>
 template<class T1, class D1, class T2, class D2>
   requires three_way_comparable_with<typename unique_ptr<T1, D1>::pointer,
                                      typename unique_ptr<T2, D2>::pointer>
-  compare_three_way_result_t<typename unique_ptr<T1, D1>::pointer,
-                             typename unique_ptr<T2, D2>::pointer>
-    operator<=>(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
+    compare_three_way_result_t<typename unique_ptr<T1, D1>::pointer,
+                               typename unique_ptr<T2, D2>::pointer>
+      operator<=>(const unique_ptr<T1, D1>& x, const unique_ptr<T2, D2>& y);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -9774,8 +9774,8 @@ The second function template returns \tcode{!(nullptr < x)}.
 \begin{itemdecl}
 template<class T, class D>
   requires three_way_comparable_with<typename unique_ptr<T, D>::pointer, nullptr_t>
-  compare_three_way_result_t<typename unique_ptr<T, D>::pointer, nullptr_t>
-    operator<=>(const unique_ptr<T, D>& x, nullptr_t);
+    compare_three_way_result_t<typename unique_ptr<T, D>::pointer, nullptr_t>
+      operator<=>(const unique_ptr<T, D>& x, nullptr_t);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -14676,7 +14676,7 @@ by the builtin operators \tcode{<}, \tcode{>}, \tcode{<=}, \tcode{>=}, and
 struct ranges::equal_to {
   template<class T, class U>
     requires equality_comparable_with<T, U> || @\placeholdernc{BUILTIN-PTR-CMP}@(T, ==, U)
-  constexpr bool operator()(T&& t, U&& u) const;
+      constexpr bool operator()(T&& t, U&& u) const;
 
   using is_transparent = @\unspecnc@;
 };
@@ -14711,7 +14711,7 @@ shall be equality-preserving\iref{concepts.equality}.
 struct ranges::not_equal_to {
   template<class T, class U>
     requires equality_comparable_with<T, U> || @\placeholdernc{BUILTIN-PTR-CMP}@(T, ==, U)
-  constexpr bool operator()(T&& t, U&& u) const;
+      constexpr bool operator()(T&& t, U&& u) const;
 
   using is_transparent = @\unspecnc@;
 };
@@ -14730,7 +14730,7 @@ return !ranges::equal_to{}(std::forward<T>(t), std::forward<U>(u));
 struct ranges::greater {
   template<class T, class U>
     requires totally_ordered_with<T, U> || @\placeholdernc{BUILTIN-PTR-CMP}@(U, <, T)
-  constexpr bool operator()(T&& t, U&& u) const;
+      constexpr bool operator()(T&& t, U&& u) const;
 
   using is_transparent = @\unspecnc@;
 };
@@ -14749,7 +14749,7 @@ return ranges::less{}(std::forward<U>(u), std::forward<T>(t));
 struct ranges::less {
   template<class T, class U>
     requires totally_ordered_with<T, U> || @\placeholdernc{BUILTIN-PTR-CMP}@(T, <, U)
-  constexpr bool operator()(T&& t, U&& u) const;
+      constexpr bool operator()(T&& t, U&& u) const;
 
   using is_transparent = @\unspecnc@;
 };
@@ -14790,7 +14790,7 @@ Otherwise, equivalent to:
 struct ranges::greater_equal {
   template<class T, class U>
     requires totally_ordered_with<T, U> || @\placeholdernc{BUILTIN-PTR-CMP}@(T, <, U)
-  constexpr bool operator()(T&& t, U&& u) const;
+      constexpr bool operator()(T&& t, U&& u) const;
 
   using is_transparent = @\unspecnc@;
 };
@@ -14809,7 +14809,7 @@ return !ranges::less{}(std::forward<T>(t), std::forward<U>(u));
 struct ranges::less_equal {
   template<class T, class U>
     requires totally_ordered_with<T, U> || @\placeholdernc{BUILTIN-PTR-CMP}@(U, <, T)
-  constexpr bool operator()(T&& t, U&& u) const;
+      constexpr bool operator()(T&& t, U&& u) const;
 
   using is_transparent = @\unspecnc@;
 };
