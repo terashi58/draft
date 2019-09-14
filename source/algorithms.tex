@@ -25,584 +25,6 @@ as summarized in \tref{algorithms.summary}.
 \ref{alg.c.library}            & C library algorithms              & \tcode{<cstdlib>} \\
 \end{libsumtab}
 
-\rSec1[algorithms.requirements]{Algorithms requirements}
-\pnum
-All of the algorithms
-are separated from the particular implementations of data structures and
-are parameterized by iterator types.
-Because of this, they can work with program-defined data structures,
-as long as these data structures have iterator types
-satisfying the assumptions on the algorithms.
-
-\pnum
-The entities defined in the \tcode{std::ranges} namespace in this Clause
-are not found by argument-dependent name lookup\iref{basic.lookup.argdep}.
-When found by unqualified\iref{basic.lookup.unqual} name lookup
-for the \grammarterm{postfix-expression} in a function call\iref{expr.call},
-they inhibit argument-dependent name lookup.
-
-\begin{example}
-\begin{codeblock}
-void foo() {
-  using namespace std::ranges;
-  std::vector<int> vec{1,2,3};
-  find(begin(vec), end(vec), 2); // \#1
-}
-\end{codeblock}
-The function call expression at \tcode{\#1} invokes \tcode{std::ranges::find},
-not \tcode{std::find}, despite that
-(a) the iterator type returned from \tcode{begin(vec)} and \tcode{end(vec)}
-may be associated with namespace \tcode{std} and
-(b) \tcode{std::find} is more specialized\iref{temp.func.order} than
-\tcode{std::ranges::find} since the former requires
-its first two parameters to have the same type.
-\end{example}
-
-\pnum
-For purposes of determining the existence of data races,
-algorithms shall not modify objects referenced through an iterator argument
-unless the specification requires such modification.
-
-\pnum
-Throughout this Clause, where the template parameters are not constrained,
-the names of template parameters are used to express type requirements.
-\begin{itemize}
-\item
-  If an algorithm's template parameter is named
-  \tcode{InputIterator},
-  \tcode{InputIterator1}, or
-  \tcode{Input\-Iterator2},
-  the template argument shall meet the
-  \oldconcept{InputIterator} requirements\iref{input.iterators}.
-\item
-  If an algorithm's template parameter is named
-  \tcode{OutputIterator},
-  \tcode{OutputIterator1}, or
-  \tcode{Output\-Iterator2},
-  the template argument shall meet the
-  \oldconcept{OutputIterator} requirements\iref{output.iterators}.
-\item
-  If an algorithm's template parameter is named
-  \tcode{ForwardIterator},
-  \tcode{ForwardIterator1}, or
-  \tcode{Forward\-Iterator2},
-  the template argument shall meet the
-  \oldconcept{ForwardIterator} requirements\iref{forward.iterators}.
-\item
-  If an algorithm's template parameter is named
-  \tcode{BidirectionalIterator},
-  \tcode{Bidirectional\-Iterator1}, or
-  \tcode{BidirectionalIterator2},
-  the template argument shall meet the
-  \oldconcept{BidirectionalIterator} requirements\iref{bidirectional.iterators}.
-\item
-  If an algorithm's template parameter is named
-  \tcode{RandomAccessIterator},
-  \tcode{Random\-AccessIterator1}, or
-  \tcode{RandomAccessIterator2},
-  the template argument shall meet the
-  \oldconcept{RandomAccessIterator} requirements\iref{random.access.iterators}.
-\end{itemize}
-
-\pnum
-If an algorithm's \effects element specifies
-that a value pointed to by any iterator passed as an argument is modified,
-then that algorithm has an additional type requirement:
-The type of that argument shall meet
-the requirements of a mutable iterator\iref{iterator.requirements}.
-\begin{note}
-This requirement does not affect arguments that are named
-\tcode{OutputIterator}, \tcode{OutputIterator1}, or \tcode{OutputIterator2},
-because output iterators must always be mutable, nor
-does it affect arguments that are constrained,
-for which mutability requirements are expressed explicitly.
-\end{note}
-
-\pnum
-Both in-place and copying versions are provided for certain algorithms.%
-\footnote{The decision whether to include a copying version was
-usually based on complexity considerations.
-When the cost of doing the operation dominates the cost of copy,
-the copying version is not included.
-For example, \tcode{sort_copy} is not included
-because the cost of sorting is much more significant,
-and users might as well do \tcode{copy} followed by \tcode{sort}.}
-When such a version is provided for \textit{algorithm} it is called
-\textit{algorithm\tcode{_copy}}.
-Algorithms that take predicates end with the suffix \tcode{_if}
-(which follows the suffix \tcode{_copy}).
-
-\pnum
-When not otherwise constrained, the \tcode{Predicate} parameter is used
-whenever an algorithm expects a function object\iref{function.objects} that,
-when applied to the result of dereferencing the corresponding iterator,
-returns a value testable as \tcode{true}.
-In other words,
-if an algorithm takes \tcode{Predicate pred} as its argument and
-\tcode{first} as its iterator argument with value type \tcode{T},
-it should work correctly in the construct
-\tcode{pred(*first)} contextually converted to \tcode{bool}\iref{conv}.
-The function object \tcode{pred} shall not apply any non-constant function
-through the dereferenced iterator.
-Given a glvalue \tcode{u} of type (possibly \tcode{const}) \tcode{T}
-that designates the same object as \tcode{*first},
-\tcode{pred(u)} shall be a valid expression
-that is equal to \tcode{pred(*first)}.
-
-\pnum
-When not otherwise constrained, the \tcode{BinaryPredicate} parameter is used
-whenever an algorithm expects a function object that when applied
-to the result of dereferencing two corresponding iterators or
-to dereferencing an iterator and type \tcode{T}
-when \tcode{T} is part of the signature
-returns a value testable as \tcode{true}.
-In other words,
-if an algorithm takes \tcode{BinaryPredicate binary_pred} as its argument and
-\tcode{first1} and \tcode{first2} as its iterator arguments
-with respective value types \tcode{T1} and \tcode{T2},
-it should work correctly in the construct
-\tcode{binary_pred(*first1, *first2)} contextually converted to \tcode{bool}\iref{conv}.
-Unless otherwise specified,
-\tcode{BinaryPredicate} always takes the first iterator's \tcode{value_type}
-as its first argument, that is, in those cases when \tcode{T value}
-is part of the signature, it should work correctly in the construct
-\tcode{binary_pred(*first1, value)} contextually converted to \tcode{bool}\iref{conv}.
-\tcode{binary_pred} shall not apply any non-constant function
-through the dereferenced iterators.
-Given a glvalue \tcode{u} of type (possibly \tcode{const}) \tcode{T1}
-that designates the same object as \tcode{*first1}, and
-a glvalue \tcode{v} of type (possibly \tcode{const}) \tcode{T2}
-that designates the same object as \tcode{*first2},
-\tcode{binary_pred(u, *first2)},
-\tcode{binary_pred(*first1, v)}, and
-\tcode{binary_pred(u, v)}
-shall each be a valid expression that is equal to
-\tcode{binary_pred(*first1, *first2)}, and
-\tcode{binary_pred(u, value)}
-shall be a valid expression that is equal to
-\tcode{binary_pred(*first1, value)}.
-
-\pnum
-The parameters
-\tcode{UnaryOperation},
-\tcode{BinaryOperation},
-\tcode{BinaryOperation1},
-and \tcode{BinaryOperation2}
-are used
-whenever an algorithm expects a function object\iref{function.objects}.
-
-\pnum
-\begin{note}
-Unless otherwise specified, algorithms that take function objects as arguments
-are permitted to copy those function objects freely.
-Programmers for whom object identity is important should consider
-using a wrapper class that points to a noncopied implementation object
-such as \tcode{reference_wrapper<T>}\iref{refwrap}, or some equivalent solution.
-\end{note}
-
-\pnum
-When the description of an algorithm gives an expression such as
-\tcode{*first == value} for a condition, the expression
-shall evaluate to either \tcode{true} or \tcode{false} in boolean contexts.
-
-\pnum
-In the description of the algorithms, operator \tcode{+}
-is used for some of the iterator categories
-for which it does not have to be defined.
-In these cases the semantics of \tcode{a + n} are the same as those of
-\begin{codeblock}
-auto tmp = a;
-for (; n < 0; ++n) --tmp;
-for (; n > 0; --n) ++tmp;
-return tmp;
-\end{codeblock}
-Similarly, operator \tcode{-} is used
-for some combinations of iterators and sentinel types
-for which it does not have to be defined.
-If \range{a}{b} denotes a range,
-the semantics of \tcode{b - a} in these cases are the same as those of
-\begin{codeblock}
-iter_difference_t<remove_reference_t<decltype(a)>> n = 0;
-for (auto tmp = a; tmp != b; ++tmp) ++n;
-return n;
-\end{codeblock}
-and if \range{b}{a} denotes a range, the same as those of
-\begin{codeblock}
-iter_difference_t<remove_reference_t<decltype(b)>> n = 0;
-for (auto tmp = b; tmp != a; ++tmp) --n;
-return n;
-\end{codeblock}
-
-\pnum
-In the description of algorithm return values,
-a sentinel value \tcode{s} denoting the end of a range \range{i}{s}
-is sometimes returned where an iterator is expected.
-In these cases,
-the semantics are as if the sentinel is converted into an iterator using
-\tcode{ranges::next(i, s)}.
-
-\pnum
-Overloads of algorithms that take \libconcept{range} arguments\iref{range.range}
-behave as if they are implemented by calling \tcode{ranges::begin} and
-\tcode{ranges::end} on the \libconcept{range}(s) and
-dispatching to the overload in namespace \tcode{ranges}
-that takes separate iterator and sentinel arguments.
-
-\pnum
-The number and order of deducible template parameters for algorithm declarations
-are unspecified, except where explicitly stated otherwise.
-\begin{note}
-Consequently, the algorithms may not
-be called with explicitly-specified template argument lists.
-\end{note}
-
-\pnum
-The class templates
-\tcode{binary_transform_result},
-\tcode{for_each_result},
-\tcode{minmax_result},
-\tcode{mismatch_result},
-\tcode{next_permutation_result},
-\tcode{copy_result}, and
-\tcode{partition_copy_result}
-have the template parameters, data members, and special members specified below.
-They have no base classes or members other than those specified.
-
-\rSec1[algorithms.parallel]{Parallel algorithms}
-
-\pnum
-This subclause describes components that \Cpp{} programs may use
-to perform operations on containers and other sequences in parallel.
-
-\rSec2[algorithms.parallel.defns]{Terms and definitions}
-\pnum
-A \defn{parallel algorithm} is a function template listed in this document
-with a template parameter named \tcode{ExecutionPolicy}.
-
-\pnum
-Parallel algorithms access objects indirectly accessible via their arguments
-by invoking the following functions:
-\begin{itemize}
-\item
-  All operations of the categories of the iterators
-  that the algorithm is instantiated with.
-\item
-  Operations on those sequence elements that are required by its specification.
-\item
-  User-provided function objects
-  to be applied during the execution of the algorithm,
-  if required by the specification.
-\item
-  Operations on those function objects required by the specification.
-\begin{note}
-See~\ref{algorithms.requirements}.
-\end{note}
-\end{itemize}
-These functions are herein called \defn{element access functions}.
-\begin{example}
-The \tcode{sort} function may invoke the following element access functions:
-\begin{itemize}
-\item
-  Operations of the random-access iterator of the actual template argument
-  (as per \ref{random.access.iterators}),
-  as implied by the name of the template parameter \tcode{RandomAccessIterator}.
-\item
-  The \tcode{swap} function on the elements of the sequence
-  (as per the preconditions specified in \ref{sort}).
-\item
-  The user-provided \tcode{Compare} function object.
-\end{itemize}
-\end{example}
-
-\pnum
-A standard library function is \defn{vectorization-unsafe}
-if it is specified to synchronize with another function invocation, or
-another function invocation is specified to synchronize with it,
-and if it is not a memory allocation or deallocation function.
-\begin{note}
-Implementations must ensure that internal synchronization
-inside standard library functions does not prevent forward progress
-when those functions are executed by threads of execution
-with weakly parallel forward progress guarantees.
-\end{note}
-\begin{example}
-\begin{codeblock}
-int x = 0;
-std::mutex m;
-void f() {
-  int a[] = {1,2};
-  std::for_each(std::execution::par_unseq, std::begin(a), std::end(a), [&](int) {
-    std::lock_guard<mutex> guard(m);            // incorrect: \tcode{lock_guard} constructor calls \tcode{m.lock()}
-  ++x;
-  });
-}
-\end{codeblock}
-The above program may result in two consecutive calls to \tcode{m.lock()}
-on the same thread of execution (which may deadlock),
-because the applications of the function object are not guaranteed
-to run on different threads of execution.
-\end{example}
-
-\rSec2[algorithms.parallel.user]{Requirements on user-provided function objects}
-
-\pnum
-Unless otherwise specified,
-function objects passed into parallel algorithms as objects of type
-\tcode{Predicate},
-\tcode{BinaryPredicate},
-\tcode{Compare},
-\tcode{UnaryOperation},
-\tcode{BinaryOperation},
-\tcode{BinaryOperation1},
-\tcode{BinaryOperation2}, and
-the operators used by the analogous overloads to these parallel algorithms
-that could be formed by the invocation
-with the specified default predicate or operation (where applicable)
-shall not directly or indirectly modify objects via their arguments,
-nor shall they rely on the identity of the provided objects.
-
-\rSec2[algorithms.parallel.exec]{Effect of execution policies on algorithm execution}
-
-\pnum
-Parallel algorithms have
-template parameters named \tcode{ExecutionPolicy}\iref{execpol}
-which describe the manner in which the execution of these algorithms may be
-parallelized and the manner in which they apply the element access functions.
-
-\pnum
-If an object is modified by an element access function,
-the algorithm will perform no other unsynchronized accesses to that object.
-The modifying element access functions are those
-which are specified as modifying the object.
-\begin{note}
-For example,
-\tcode{swap},
-\tcode{++},
-\tcode{--},
-\tcode{@=}, and
-assignments
-modify the object.
-For the assignment and \tcode{@=} operators, only the left argument is modified.
-\end{note}
-
-\pnum
-Unless otherwise stated, implementations may make arbitrary copies of elements
-(with type \tcode{T}) from sequences
-where \tcode{is_trivially_copy_constructible_v<T>}
-and \tcode{is_trivially_destructible_v<T>} are \tcode{true}.
-\begin{note}
-This implies that user-supplied function objects should not rely on
-object identity of arguments for such input sequences.
-Users for whom the object identity of the arguments to these function objects
-is important should consider using a wrapping iterator
-that returns a non-copied implementation object
-such as \tcode{reference_wrapper<T>}\iref{refwrap}
-or some equivalent solution.
-\end{note}
-
-\pnum
-The invocations of element access functions in parallel algorithms invoked with
-an execution policy object of type \tcode{execution::sequenced_policy} all occur
-in the calling thread of execution.
-\begin{note}
-The invocations are not interleaved; see~\ref{intro.execution}.
-\end{note}
-
-\pnum
-The invocations of element access functions in parallel algorithms invoked with
-an execution policy object of type \tcode{execution::unsequenced_policy}
-are permitted to execute in an unordered fashion
-in the calling thread of execution,
-unsequenced with respect to one another in the calling thread of execution.
-\begin{note}
-This means that multiple function object invocations
-may be interleaved on a single thread of execution,
-which overrides the usual guarantee from \ref{intro.execution}
-that function executions do not overlap with one another.
-\end{note}
-The behavior of a program is undefined if
-it invokes a vectorization-unsafe standard library function
-from user code
-called from a \tcode{execution::unsequenced_policy} algorithm.
-\begin{note}
-Because \tcode{execution::unsequenced_policy} allows
-the execution of element access functions
-to be interleaved on a single thread of execution,
-blocking synchronization, including the use of mutexes, risks deadlock.
-\end{note}
-
-\pnum
-The invocations of element access functions in parallel algorithms invoked with
-an execution policy object of type \tcode{execution::parallel_policy}
-are permitted to execute either
-in the invoking thread of execution or
-in a thread of execution implicitly created by the library
-to support parallel algorithm execution.
-If the threads of execution created by \tcode{thread}\iref{thread.thread.class}
-or \tcode{jthread}\iref{thread.jthread.class}
-provide concurrent forward progress guarantees\iref{intro.progress},
-then a thread of execution implicitly created by the library will provide
-parallel forward progress guarantees;
-otherwise, the provided forward progress guarantee is
-\impldef{forward progress guarantees for
-implicit threads of parallel algorithms (if not defined for \tcode{thread})}.
-Any such invocations executing in the same thread of execution
-are indeterminately sequenced with respect to each other.
-\begin{note}
-It is the caller's responsibility to ensure
-that the invocation does not introduce data races or deadlocks.
-\end{note}
-\begin{example}
-\begin{codeblock}
-int a[] = {0,1};
-std::vector<int> v;
-std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int i) {
-  v.push_back(i*2+1);                                 // incorrect: data race
-});
-\end{codeblock}
-The program above has a data race because of the unsynchronized access to the
-container \tcode{v}.
-\end{example}
-\begin{example}
-\begin{codeblock}
-std::atomic<int> x{0};
-int a[] = {1,2};
-std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int) {
-  x.fetch_add(1, std::memory_order::relaxed);
-  // spin wait for another iteration to change the value of \tcode{x}
-  while (x.load(std::memory_order::relaxed) == 1) { } // incorrect: assumes execution order
-});
-\end{codeblock}
-The above example depends on the order of execution of the iterations, and
-will not terminate if both iterations are executed sequentially
-on the same thread of execution.
-\end{example}
-\begin{example}
-\begin{codeblock}
-int x = 0;
-std::mutex m;
-int a[] = {1,2};
-std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int) {
-  std::lock_guard<mutex> guard(m);
-  ++x;
-});
-\end{codeblock}
-The above example synchronizes access to object \tcode{x}
-ensuring that it is incremented correctly.
-\end{example}
-
-\pnum
-The invocations of element access functions in parallel algorithms invoked with
-an execution policy object of type \tcode{execution::parallel_unsequenced_policy} are
-permitted to execute
-in an unordered fashion in unspecified threads of execution, and
-unsequenced with respect to one another within each thread of execution.
-These threads of execution are
-either the invoking thread of execution
-or threads of execution implicitly created by the library;
-the latter will provide weakly parallel forward progress guarantees.
-\begin{note}
-This means that multiple function object invocations may be interleaved
-on a single thread of execution,
-which overrides the usual guarantee from \ref{intro.execution}
-that function executions do not overlap with one another.
-\end{note}
-The behavior of a program is undefined if
-it invokes a vectorization-unsafe standard library function
-from user code
-called from a \tcode{execution::parallel_unsequenced_policy} algorithm.
-\begin{note}
-Because \tcode{execution::parallel_unsequenced_policy} allows
-the execution of element access functions
-to be interleaved on a single thread of execution,
-blocking synchronization, including the use of mutexes, risks deadlock.
-\end{note}
-
-\pnum
-\begin{note}
-The semantics of invocation with
-\tcode{execution::unsequenced_policy},
-\tcode{execution::parallel_policy}, or
-\tcode{execution::parallel_unsequenced_policy}
-allow the implementation to fall back to sequential execution
-if the system cannot parallelize an algorithm invocation,
-e.g., due to lack of resources.
-\end{note}
-
-\pnum
-If an invocation of a parallel algorithm uses threads of execution
-implicitly created by the library,
-then the invoking thread of execution will either
-\begin{itemize}
-\item
-  temporarily block
-  with forward progress guarantee delegation\iref{intro.progress}
-  on the completion of these library-managed threads of execution, or
-\item
-  eventually execute an element access function;
-\end{itemize}
-the thread of execution will continue to do so until the algorithm is finished.
-\begin{note}
-In blocking with forward progress guarantee delegation in this context,
-a thread of execution created by the library
-is considered to have finished execution
-as soon as it has finished the execution
-of the particular element access function
-that the invoking thread of execution logically depends on.
-\end{note}
-
-\pnum
-The semantics of parallel algorithms invoked with an execution policy object of
-\impldef{additional execution policies supported by parallel algorithms} type
-are \impldef{semantics of parallel algorithms invoked with
-imple\-men\-tation-defined execution policies}.
-
-\rSec2[algorithms.parallel.exceptions]{Parallel algorithm exceptions}
-
-\pnum
-During the execution of a parallel algorithm,
-if temporary memory resources are required for parallelization
-and none are available, the algorithm throws a \tcode{bad_alloc} exception.
-
-\pnum
-During the execution of a parallel algorithm,
-if the invocation of an element access function exits via an uncaught exception,
-the behavior is determined by the \tcode{ExecutionPolicy}.
-
-\rSec2[algorithms.parallel.overloads]{\tcode{ExecutionPolicy} algorithm overloads}
-
-\pnum
-Parallel algorithms are algorithm overloads.
-Each parallel algorithm overload
-has an additional template type parameter named \tcode{ExecutionPolicy},
-which is the first template parameter.
-Additionally, each parallel algorithm overload
-has an additional function parameter of type \tcode{ExecutionPolicy\&\&},
-which is the first function parameter.
-\begin{note}
-Not all algorithms have parallel algorithm overloads.
-\end{note}
-
-\pnum
-Unless otherwise specified,
-the semantics of \tcode{ExecutionPolicy} algorithm overloads
-are identical to their overloads without.
-
-\pnum
-Unless otherwise specified,
-the complexity requirements of \tcode{ExecutionPolicy} algorithm overloads
-are relaxed from the complexity requirements of the overloads without
-as follows:
-when the guarantee says ``at most \placeholder{expr}'' or
-``exactly \placeholder{expr}''
-and does not specify the number of assignments or swaps, and
-\placeholder{expr} is not already expressed with  \bigoh{} notation,
-the complexity of the algorithm shall be \bigoh{\placeholder{expr}}.
-
-\pnum
-Parallel algorithms shall not participate in overload resolution unless
-\tcode{is_execution_policy_v<remove_cvref_t<ExecutionPolicy>>} is \tcode{true}.
-
 \rSec1[algorithm.syn]{Header \tcode{<algorithm>} synopsis}
 \indexhdr{algorithm}%
 
@@ -2896,6 +2318,584 @@ namespace std {
   }
 }
 \end{codeblock}
+
+\rSec1[algorithms.requirements]{Algorithms requirements}
+\pnum
+All of the algorithms
+are separated from the particular implementations of data structures and
+are parameterized by iterator types.
+Because of this, they can work with program-defined data structures,
+as long as these data structures have iterator types
+satisfying the assumptions on the algorithms.
+
+\pnum
+The entities defined in the \tcode{std::ranges} namespace in this Clause
+are not found by argument-dependent name lookup\iref{basic.lookup.argdep}.
+When found by unqualified\iref{basic.lookup.unqual} name lookup
+for the \grammarterm{postfix-expression} in a function call\iref{expr.call},
+they inhibit argument-dependent name lookup.
+
+\begin{example}
+\begin{codeblock}
+void foo() {
+  using namespace std::ranges;
+  std::vector<int> vec{1,2,3};
+  find(begin(vec), end(vec), 2); // \#1
+}
+\end{codeblock}
+The function call expression at \tcode{\#1} invokes \tcode{std::ranges::find},
+not \tcode{std::find}, despite that
+(a) the iterator type returned from \tcode{begin(vec)} and \tcode{end(vec)}
+may be associated with namespace \tcode{std} and
+(b) \tcode{std::find} is more specialized\iref{temp.func.order} than
+\tcode{std::ranges::find} since the former requires
+its first two parameters to have the same type.
+\end{example}
+
+\pnum
+For purposes of determining the existence of data races,
+algorithms shall not modify objects referenced through an iterator argument
+unless the specification requires such modification.
+
+\pnum
+Throughout this Clause, where the template parameters are not constrained,
+the names of template parameters are used to express type requirements.
+\begin{itemize}
+\item
+  If an algorithm's template parameter is named
+  \tcode{InputIterator},
+  \tcode{InputIterator1}, or
+  \tcode{Input\-Iterator2},
+  the template argument shall meet the
+  \oldconcept{InputIterator} requirements\iref{input.iterators}.
+\item
+  If an algorithm's template parameter is named
+  \tcode{OutputIterator},
+  \tcode{OutputIterator1}, or
+  \tcode{Output\-Iterator2},
+  the template argument shall meet the
+  \oldconcept{OutputIterator} requirements\iref{output.iterators}.
+\item
+  If an algorithm's template parameter is named
+  \tcode{ForwardIterator},
+  \tcode{ForwardIterator1}, or
+  \tcode{Forward\-Iterator2},
+  the template argument shall meet the
+  \oldconcept{ForwardIterator} requirements\iref{forward.iterators}.
+\item
+  If an algorithm's template parameter is named
+  \tcode{BidirectionalIterator},
+  \tcode{Bidirectional\-Iterator1}, or
+  \tcode{BidirectionalIterator2},
+  the template argument shall meet the
+  \oldconcept{BidirectionalIterator} requirements\iref{bidirectional.iterators}.
+\item
+  If an algorithm's template parameter is named
+  \tcode{RandomAccessIterator},
+  \tcode{Random\-AccessIterator1}, or
+  \tcode{RandomAccessIterator2},
+  the template argument shall meet the
+  \oldconcept{RandomAccessIterator} requirements\iref{random.access.iterators}.
+\end{itemize}
+
+\pnum
+If an algorithm's \effects element specifies
+that a value pointed to by any iterator passed as an argument is modified,
+then that algorithm has an additional type requirement:
+The type of that argument shall meet
+the requirements of a mutable iterator\iref{iterator.requirements}.
+\begin{note}
+This requirement does not affect arguments that are named
+\tcode{OutputIterator}, \tcode{OutputIterator1}, or \tcode{OutputIterator2},
+because output iterators must always be mutable, nor
+does it affect arguments that are constrained,
+for which mutability requirements are expressed explicitly.
+\end{note}
+
+\pnum
+Both in-place and copying versions are provided for certain algorithms.%
+\footnote{The decision whether to include a copying version was
+usually based on complexity considerations.
+When the cost of doing the operation dominates the cost of copy,
+the copying version is not included.
+For example, \tcode{sort_copy} is not included
+because the cost of sorting is much more significant,
+and users might as well do \tcode{copy} followed by \tcode{sort}.}
+When such a version is provided for \textit{algorithm} it is called
+\textit{algorithm\tcode{_copy}}.
+Algorithms that take predicates end with the suffix \tcode{_if}
+(which follows the suffix \tcode{_copy}).
+
+\pnum
+When not otherwise constrained, the \tcode{Predicate} parameter is used
+whenever an algorithm expects a function object\iref{function.objects} that,
+when applied to the result of dereferencing the corresponding iterator,
+returns a value testable as \tcode{true}.
+In other words,
+if an algorithm takes \tcode{Predicate pred} as its argument and
+\tcode{first} as its iterator argument with value type \tcode{T},
+it should work correctly in the construct
+\tcode{pred(*first)} contextually converted to \tcode{bool}\iref{conv}.
+The function object \tcode{pred} shall not apply any non-constant function
+through the dereferenced iterator.
+Given a glvalue \tcode{u} of type (possibly \tcode{const}) \tcode{T}
+that designates the same object as \tcode{*first},
+\tcode{pred(u)} shall be a valid expression
+that is equal to \tcode{pred(*first)}.
+
+\pnum
+When not otherwise constrained, the \tcode{BinaryPredicate} parameter is used
+whenever an algorithm expects a function object that when applied
+to the result of dereferencing two corresponding iterators or
+to dereferencing an iterator and type \tcode{T}
+when \tcode{T} is part of the signature
+returns a value testable as \tcode{true}.
+In other words,
+if an algorithm takes \tcode{BinaryPredicate binary_pred} as its argument and
+\tcode{first1} and \tcode{first2} as its iterator arguments
+with respective value types \tcode{T1} and \tcode{T2},
+it should work correctly in the construct
+\tcode{binary_pred(*first1, *first2)} contextually converted to \tcode{bool}\iref{conv}.
+Unless otherwise specified,
+\tcode{BinaryPredicate} always takes the first iterator's \tcode{value_type}
+as its first argument, that is, in those cases when \tcode{T value}
+is part of the signature, it should work correctly in the construct
+\tcode{binary_pred(*first1, value)} contextually converted to \tcode{bool}\iref{conv}.
+\tcode{binary_pred} shall not apply any non-constant function
+through the dereferenced iterators.
+Given a glvalue \tcode{u} of type (possibly \tcode{const}) \tcode{T1}
+that designates the same object as \tcode{*first1}, and
+a glvalue \tcode{v} of type (possibly \tcode{const}) \tcode{T2}
+that designates the same object as \tcode{*first2},
+\tcode{binary_pred(u, *first2)},
+\tcode{binary_pred(*first1, v)}, and
+\tcode{binary_pred(u, v)}
+shall each be a valid expression that is equal to
+\tcode{binary_pred(*first1, *first2)}, and
+\tcode{binary_pred(u, value)}
+shall be a valid expression that is equal to
+\tcode{binary_pred(*first1, value)}.
+
+\pnum
+The parameters
+\tcode{UnaryOperation},
+\tcode{BinaryOperation},
+\tcode{BinaryOperation1},
+and \tcode{BinaryOperation2}
+are used
+whenever an algorithm expects a function object\iref{function.objects}.
+
+\pnum
+\begin{note}
+Unless otherwise specified, algorithms that take function objects as arguments
+are permitted to copy those function objects freely.
+Programmers for whom object identity is important should consider
+using a wrapper class that points to a noncopied implementation object
+such as \tcode{reference_wrapper<T>}\iref{refwrap}, or some equivalent solution.
+\end{note}
+
+\pnum
+When the description of an algorithm gives an expression such as
+\tcode{*first == value} for a condition, the expression
+shall evaluate to either \tcode{true} or \tcode{false} in boolean contexts.
+
+\pnum
+In the description of the algorithms, operator \tcode{+}
+is used for some of the iterator categories
+for which it does not have to be defined.
+In these cases the semantics of \tcode{a + n} are the same as those of
+\begin{codeblock}
+auto tmp = a;
+for (; n < 0; ++n) --tmp;
+for (; n > 0; --n) ++tmp;
+return tmp;
+\end{codeblock}
+Similarly, operator \tcode{-} is used
+for some combinations of iterators and sentinel types
+for which it does not have to be defined.
+If \range{a}{b} denotes a range,
+the semantics of \tcode{b - a} in these cases are the same as those of
+\begin{codeblock}
+iter_difference_t<remove_reference_t<decltype(a)>> n = 0;
+for (auto tmp = a; tmp != b; ++tmp) ++n;
+return n;
+\end{codeblock}
+and if \range{b}{a} denotes a range, the same as those of
+\begin{codeblock}
+iter_difference_t<remove_reference_t<decltype(b)>> n = 0;
+for (auto tmp = b; tmp != a; ++tmp) --n;
+return n;
+\end{codeblock}
+
+\pnum
+In the description of algorithm return values,
+a sentinel value \tcode{s} denoting the end of a range \range{i}{s}
+is sometimes returned where an iterator is expected.
+In these cases,
+the semantics are as if the sentinel is converted into an iterator using
+\tcode{ranges::next(i, s)}.
+
+\pnum
+Overloads of algorithms that take \libconcept{range} arguments\iref{range.range}
+behave as if they are implemented by calling \tcode{ranges::begin} and
+\tcode{ranges::end} on the \libconcept{range}(s) and
+dispatching to the overload in namespace \tcode{ranges}
+that takes separate iterator and sentinel arguments.
+
+\pnum
+The number and order of deducible template parameters for algorithm declarations
+are unspecified, except where explicitly stated otherwise.
+\begin{note}
+Consequently, the algorithms may not
+be called with explicitly-specified template argument lists.
+\end{note}
+
+\pnum
+The class templates
+\tcode{binary_transform_result},
+\tcode{for_each_result},
+\tcode{minmax_result},
+\tcode{mismatch_result},
+\tcode{next_permutation_result},
+\tcode{copy_result}, and
+\tcode{partition_copy_result}
+have the template parameters, data members, and special members specified below.
+They have no base classes or members other than those specified.
+
+\rSec1[algorithms.parallel]{Parallel algorithms}
+
+\pnum
+This subclause describes components that \Cpp{} programs may use
+to perform operations on containers and other sequences in parallel.
+
+\rSec2[algorithms.parallel.defns]{Terms and definitions}
+\pnum
+A \defn{parallel algorithm} is a function template listed in this document
+with a template parameter named \tcode{ExecutionPolicy}.
+
+\pnum
+Parallel algorithms access objects indirectly accessible via their arguments
+by invoking the following functions:
+\begin{itemize}
+\item
+  All operations of the categories of the iterators
+  that the algorithm is instantiated with.
+\item
+  Operations on those sequence elements that are required by its specification.
+\item
+  User-provided function objects
+  to be applied during the execution of the algorithm,
+  if required by the specification.
+\item
+  Operations on those function objects required by the specification.
+\begin{note}
+See~\ref{algorithms.requirements}.
+\end{note}
+\end{itemize}
+These functions are herein called \defn{element access functions}.
+\begin{example}
+The \tcode{sort} function may invoke the following element access functions:
+\begin{itemize}
+\item
+  Operations of the random-access iterator of the actual template argument
+  (as per \ref{random.access.iterators}),
+  as implied by the name of the template parameter \tcode{RandomAccessIterator}.
+\item
+  The \tcode{swap} function on the elements of the sequence
+  (as per the preconditions specified in \ref{sort}).
+\item
+  The user-provided \tcode{Compare} function object.
+\end{itemize}
+\end{example}
+
+\pnum
+A standard library function is \defn{vectorization-unsafe}
+if it is specified to synchronize with another function invocation, or
+another function invocation is specified to synchronize with it,
+and if it is not a memory allocation or deallocation function.
+\begin{note}
+Implementations must ensure that internal synchronization
+inside standard library functions does not prevent forward progress
+when those functions are executed by threads of execution
+with weakly parallel forward progress guarantees.
+\end{note}
+\begin{example}
+\begin{codeblock}
+int x = 0;
+std::mutex m;
+void f() {
+  int a[] = {1,2};
+  std::for_each(std::execution::par_unseq, std::begin(a), std::end(a), [&](int) {
+    std::lock_guard<mutex> guard(m);            // incorrect: \tcode{lock_guard} constructor calls \tcode{m.lock()}
+  ++x;
+  });
+}
+\end{codeblock}
+The above program may result in two consecutive calls to \tcode{m.lock()}
+on the same thread of execution (which may deadlock),
+because the applications of the function object are not guaranteed
+to run on different threads of execution.
+\end{example}
+
+\rSec2[algorithms.parallel.user]{Requirements on user-provided function objects}
+
+\pnum
+Unless otherwise specified,
+function objects passed into parallel algorithms as objects of type
+\tcode{Predicate},
+\tcode{BinaryPredicate},
+\tcode{Compare},
+\tcode{UnaryOperation},
+\tcode{BinaryOperation},
+\tcode{BinaryOperation1},
+\tcode{BinaryOperation2}, and
+the operators used by the analogous overloads to these parallel algorithms
+that could be formed by the invocation
+with the specified default predicate or operation (where applicable)
+shall not directly or indirectly modify objects via their arguments,
+nor shall they rely on the identity of the provided objects.
+
+\rSec2[algorithms.parallel.exec]{Effect of execution policies on algorithm execution}
+
+\pnum
+Parallel algorithms have
+template parameters named \tcode{ExecutionPolicy}\iref{execpol}
+which describe the manner in which the execution of these algorithms may be
+parallelized and the manner in which they apply the element access functions.
+
+\pnum
+If an object is modified by an element access function,
+the algorithm will perform no other unsynchronized accesses to that object.
+The modifying element access functions are those
+which are specified as modifying the object.
+\begin{note}
+For example,
+\tcode{swap},
+\tcode{++},
+\tcode{--},
+\tcode{@=}, and
+assignments
+modify the object.
+For the assignment and \tcode{@=} operators, only the left argument is modified.
+\end{note}
+
+\pnum
+Unless otherwise stated, implementations may make arbitrary copies of elements
+(with type \tcode{T}) from sequences
+where \tcode{is_trivially_copy_constructible_v<T>}
+and \tcode{is_trivially_destructible_v<T>} are \tcode{true}.
+\begin{note}
+This implies that user-supplied function objects should not rely on
+object identity of arguments for such input sequences.
+Users for whom the object identity of the arguments to these function objects
+is important should consider using a wrapping iterator
+that returns a non-copied implementation object
+such as \tcode{reference_wrapper<T>}\iref{refwrap}
+or some equivalent solution.
+\end{note}
+
+\pnum
+The invocations of element access functions in parallel algorithms invoked with
+an execution policy object of type \tcode{execution::sequenced_policy} all occur
+in the calling thread of execution.
+\begin{note}
+The invocations are not interleaved; see~\ref{intro.execution}.
+\end{note}
+
+\pnum
+The invocations of element access functions in parallel algorithms invoked with
+an execution policy object of type \tcode{execution::unsequenced_policy}
+are permitted to execute in an unordered fashion
+in the calling thread of execution,
+unsequenced with respect to one another in the calling thread of execution.
+\begin{note}
+This means that multiple function object invocations
+may be interleaved on a single thread of execution,
+which overrides the usual guarantee from \ref{intro.execution}
+that function executions do not overlap with one another.
+\end{note}
+The behavior of a program is undefined if
+it invokes a vectorization-unsafe standard library function
+from user code
+called from a \tcode{execution::unsequenced_policy} algorithm.
+\begin{note}
+Because \tcode{execution::unsequenced_policy} allows
+the execution of element access functions
+to be interleaved on a single thread of execution,
+blocking synchronization, including the use of mutexes, risks deadlock.
+\end{note}
+
+\pnum
+The invocations of element access functions in parallel algorithms invoked with
+an execution policy object of type \tcode{execution::parallel_policy}
+are permitted to execute either
+in the invoking thread of execution or
+in a thread of execution implicitly created by the library
+to support parallel algorithm execution.
+If the threads of execution created by \tcode{thread}\iref{thread.thread.class}
+or \tcode{jthread}\iref{thread.jthread.class}
+provide concurrent forward progress guarantees\iref{intro.progress},
+then a thread of execution implicitly created by the library will provide
+parallel forward progress guarantees;
+otherwise, the provided forward progress guarantee is
+\impldef{forward progress guarantees for
+implicit threads of parallel algorithms (if not defined for \tcode{thread})}.
+Any such invocations executing in the same thread of execution
+are indeterminately sequenced with respect to each other.
+\begin{note}
+It is the caller's responsibility to ensure
+that the invocation does not introduce data races or deadlocks.
+\end{note}
+\begin{example}
+\begin{codeblock}
+int a[] = {0,1};
+std::vector<int> v;
+std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int i) {
+  v.push_back(i*2+1);                                 // incorrect: data race
+});
+\end{codeblock}
+The program above has a data race because of the unsynchronized access to the
+container \tcode{v}.
+\end{example}
+\begin{example}
+\begin{codeblock}
+std::atomic<int> x{0};
+int a[] = {1,2};
+std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int) {
+  x.fetch_add(1, std::memory_order::relaxed);
+  // spin wait for another iteration to change the value of \tcode{x}
+  while (x.load(std::memory_order::relaxed) == 1) { } // incorrect: assumes execution order
+});
+\end{codeblock}
+The above example depends on the order of execution of the iterations, and
+will not terminate if both iterations are executed sequentially
+on the same thread of execution.
+\end{example}
+\begin{example}
+\begin{codeblock}
+int x = 0;
+std::mutex m;
+int a[] = {1,2};
+std::for_each(std::execution::par, std::begin(a), std::end(a), [&](int) {
+  std::lock_guard<mutex> guard(m);
+  ++x;
+});
+\end{codeblock}
+The above example synchronizes access to object \tcode{x}
+ensuring that it is incremented correctly.
+\end{example}
+
+\pnum
+The invocations of element access functions in parallel algorithms invoked with
+an execution policy object of type \tcode{execution::parallel_unsequenced_policy} are
+permitted to execute
+in an unordered fashion in unspecified threads of execution, and
+unsequenced with respect to one another within each thread of execution.
+These threads of execution are
+either the invoking thread of execution
+or threads of execution implicitly created by the library;
+the latter will provide weakly parallel forward progress guarantees.
+\begin{note}
+This means that multiple function object invocations may be interleaved
+on a single thread of execution,
+which overrides the usual guarantee from \ref{intro.execution}
+that function executions do not overlap with one another.
+\end{note}
+The behavior of a program is undefined if
+it invokes a vectorization-unsafe standard library function
+from user code
+called from a \tcode{execution::parallel_unsequenced_policy} algorithm.
+\begin{note}
+Because \tcode{execution::parallel_unsequenced_policy} allows
+the execution of element access functions
+to be interleaved on a single thread of execution,
+blocking synchronization, including the use of mutexes, risks deadlock.
+\end{note}
+
+\pnum
+\begin{note}
+The semantics of invocation with
+\tcode{execution::unsequenced_policy},
+\tcode{execution::parallel_policy}, or
+\tcode{execution::parallel_unsequenced_policy}
+allow the implementation to fall back to sequential execution
+if the system cannot parallelize an algorithm invocation,
+e.g., due to lack of resources.
+\end{note}
+
+\pnum
+If an invocation of a parallel algorithm uses threads of execution
+implicitly created by the library,
+then the invoking thread of execution will either
+\begin{itemize}
+\item
+  temporarily block
+  with forward progress guarantee delegation\iref{intro.progress}
+  on the completion of these library-managed threads of execution, or
+\item
+  eventually execute an element access function;
+\end{itemize}
+the thread of execution will continue to do so until the algorithm is finished.
+\begin{note}
+In blocking with forward progress guarantee delegation in this context,
+a thread of execution created by the library
+is considered to have finished execution
+as soon as it has finished the execution
+of the particular element access function
+that the invoking thread of execution logically depends on.
+\end{note}
+
+\pnum
+The semantics of parallel algorithms invoked with an execution policy object of
+\impldef{additional execution policies supported by parallel algorithms} type
+are \impldef{semantics of parallel algorithms invoked with
+imple\-men\-tation-defined execution policies}.
+
+\rSec2[algorithms.parallel.exceptions]{Parallel algorithm exceptions}
+
+\pnum
+During the execution of a parallel algorithm,
+if temporary memory resources are required for parallelization
+and none are available, the algorithm throws a \tcode{bad_alloc} exception.
+
+\pnum
+During the execution of a parallel algorithm,
+if the invocation of an element access function exits via an uncaught exception,
+the behavior is determined by the \tcode{ExecutionPolicy}.
+
+\rSec2[algorithms.parallel.overloads]{\tcode{ExecutionPolicy} algorithm overloads}
+
+\pnum
+Parallel algorithms are algorithm overloads.
+Each parallel algorithm overload
+has an additional template type parameter named \tcode{ExecutionPolicy},
+which is the first template parameter.
+Additionally, each parallel algorithm overload
+has an additional function parameter of type \tcode{ExecutionPolicy\&\&},
+which is the first function parameter.
+\begin{note}
+Not all algorithms have parallel algorithm overloads.
+\end{note}
+
+\pnum
+Unless otherwise specified,
+the semantics of \tcode{ExecutionPolicy} algorithm overloads
+are identical to their overloads without.
+
+\pnum
+Unless otherwise specified,
+the complexity requirements of \tcode{ExecutionPolicy} algorithm overloads
+are relaxed from the complexity requirements of the overloads without
+as follows:
+when the guarantee says ``at most \placeholder{expr}'' or
+``exactly \placeholder{expr}''
+and does not specify the number of assignments or swaps, and
+\placeholder{expr} is not already expressed with  \bigoh{} notation,
+the complexity of the algorithm shall be \bigoh{\placeholder{expr}}.
+
+\pnum
+Parallel algorithms shall not participate in overload resolution unless
+\tcode{is_execution_policy_v<remove_cvref_t<ExecutionPolicy>>} is \tcode{true}.
 
 \rSec1[alg.nonmodifying]{Non-modifying sequence operations}
 
