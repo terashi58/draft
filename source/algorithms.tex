@@ -697,7 +697,7 @@ namespace std {
         for_each(I first, S last, Fun f, Proj proj = {});
     template<input_range R, class Proj = identity,
              indirectly_unary_invocable<projected<iterator_t<R>, Proj>> Fun>
-      constexpr for_each_result<borrowed_iterator_t<R>, Fun>
+      constexpr for_each_result<safe_iterator_t<R>, Fun>
         for_each(R&& r, Fun f, Proj proj = {});
   }
 
@@ -747,21 +747,21 @@ namespace std {
     template<input_range R, class T, class Proj = identity>
       requires indirect_binary_predicate<ranges::equal_to,
                                          projected<iterator_t<R>, Proj>, const T*>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         find(R&& r, const T& value, Proj proj = {});
     template<input_iterator I, sentinel_for<I> S, class Proj = identity,
              indirect_unary_predicate<projected<I, Proj>> Pred>
       constexpr I find_if(I first, S last, Pred pred, Proj proj = {});
     template<input_range R, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         find_if(R&& r, Pred pred, Proj proj = {});
     template<input_iterator I, sentinel_for<I> S, class Proj = identity,
              indirect_unary_predicate<projected<I, Proj>> Pred>
       constexpr I find_if_not(I first, S last, Pred pred, Proj proj = {});
     template<input_range R, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         find_if_not(R&& r, Pred pred, Proj proj = {});
   }
 
@@ -798,7 +798,7 @@ namespace std {
     template<forward_range R1, forward_range R2,
              class Pred = ranges::equal_to, class Proj1 = identity, class Proj2 = identity>
       requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-      constexpr borrowed_subrange_t<R1>
+      constexpr safe_subrange_t<R1>
         find_end(R1&& r1, R2&& r2, Pred pred = {},
                  Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -836,7 +836,7 @@ namespace std {
     template<input_range R1, forward_range R2,
              class Pred = ranges::equal_to, class Proj1 = identity, class Proj2 = identity>
       requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-      constexpr borrowed_iterator_t<R1>
+      constexpr safe_iterator_t<R1>
         find_first_of(R1&& r1, R2&& r2,
                       Pred pred = {},
                       Proj1 proj1 = {}, Proj2 proj2 = {});
@@ -869,7 +869,7 @@ namespace std {
     template<forward_range R, class Proj = identity,
              indirect_binary_predicate<projected<iterator_t<R>, Proj>,
                                        projected<iterator_t<R>, Proj>> Pred = ranges::equal_to>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         adjacent_find(R&& r, Pred pred = {}, Proj proj = {});
   }
 
@@ -964,7 +964,7 @@ namespace std {
     template<input_range R1, input_range R2,
              class Pred = ranges::equal_to, class Proj1 = identity, class Proj2 = identity>
       requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-      constexpr mismatch_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>>
+      constexpr mismatch_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
         mismatch(R1&& r1, R2&& r2, Pred pred = {},
                  Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -1083,7 +1083,7 @@ namespace std {
     template<forward_range R1, forward_range R2, class Pred = ranges::equal_to,
              class Proj1 = identity, class Proj2 = identity>
       requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-      constexpr borrowed_subrange_t<R1>
+      constexpr safe_subrange_t<R1>
         search(R1&& r1, R2&& r2, Pred pred = {},
                Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -1120,7 +1120,7 @@ namespace std {
     template<forward_range R, class T, class Pred = ranges::equal_to,
              class Proj = identity>
       requires indirectly_comparable<iterator_t<R>, const T*, Pred, Proj>
-      constexpr borrowed_subrange_t<R>
+      constexpr safe_subrange_t<R>
         search_n(R&& r, range_difference_t<R> count,
                  const T& value, Pred pred = {}, Proj proj = {});
   }
@@ -1149,7 +1149,7 @@ namespace std {
         copy(I first, S last, O result);
     template<input_range R, weakly_incrementable O>
       requires indirectly_copyable<iterator_t<R>, O>
-      constexpr copy_result<borrowed_iterator_t<R>, O>
+      constexpr copy_result<safe_iterator_t<R>, O>
         copy(R&& r, O result);
   }
 
@@ -1193,7 +1193,7 @@ namespace std {
     template<input_range R, weakly_incrementable O, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires indirectly_copyable<iterator_t<R>, O>
-      constexpr copy_if_result<borrowed_iterator_t<R>, O>
+      constexpr copy_if_result<safe_iterator_t<R>, O>
         copy_if(R&& r, O result, Pred pred, Proj proj = {});
   }
 
@@ -1212,7 +1212,7 @@ namespace std {
         copy_backward(I1 first, S1 last, I2 result);
     template<bidirectional_range R, bidirectional_iterator I>
       requires indirectly_copyable<iterator_t<R>, I>
-      constexpr copy_backward_result<borrowed_iterator_t<R>, I>
+      constexpr copy_backward_result<safe_iterator_t<R>, I>
         copy_backward(R&& r, I result);
   }
 
@@ -1236,7 +1236,7 @@ namespace std {
         move(I first, S last, O result);
     template<input_range R, weakly_incrementable O>
       requires indirectly_movable<iterator_t<R>, O>
-      constexpr move_result<borrowed_iterator_t<R>, O>
+      constexpr move_result<safe_iterator_t<R>, O>
         move(R&& r, O result);
   }
 
@@ -1255,7 +1255,7 @@ namespace std {
         move_backward(I1 first, S1 last, I2 result);
     template<bidirectional_range R, bidirectional_iterator I>
       requires indirectly_movable<iterator_t<R>, I>
-      constexpr move_backward_result<borrowed_iterator_t<R>, I>
+      constexpr move_backward_result<safe_iterator_t<R>, I>
         move_backward(R&& r, I result);
   }
 
@@ -1278,7 +1278,7 @@ namespace std {
         swap_ranges(I1 first1, S1 last1, I2 first2, S2 last2);
     template<input_range R1, input_range R2>
       requires indirectly_swappable<iterator_t<R1>, iterator_t<R2>>
-      constexpr swap_ranges_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>>
+      constexpr swap_ranges_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
         swap_ranges(R1&& r1, R2&& r2);
   }
 
@@ -1322,7 +1322,7 @@ namespace std {
     template<input_range R, weakly_incrementable O, copy_constructible F,
              class Proj = identity>
       requires indirectly_writable<O, indirect_result_t<F&, projected<iterator_t<R>, Proj>>>
-      constexpr unary_transform_result<borrowed_iterator_t<R>, O>
+      constexpr unary_transform_result<safe_iterator_t<R>, O>
         transform(R&& r, O result, F op, Proj proj = {});
 
     template<class I1, class I2, class O>
@@ -1340,7 +1340,7 @@ namespace std {
              copy_constructible F, class Proj1 = identity, class Proj2 = identity>
       requires indirectly_writable<O, indirect_result_t<F&, projected<iterator_t<R1>, Proj1>,
                                              projected<iterator_t<R2>, Proj2>>>
-      constexpr binary_transform_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+      constexpr binary_transform_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
         transform(R1&& r1, R2&& r2, O result,
                   F binary_op, Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -1371,7 +1371,7 @@ namespace std {
       requires indirectly_writable<iterator_t<R>, const T2&> &&
                indirect_binary_predicate<ranges::equal_to,
                                          projected<iterator_t<R>, Proj>, const T1*>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         replace(R&& r, const T1& old_value, const T2& new_value, Proj proj = {});
     template<input_iterator I, sentinel_for<I> S, class T, class Proj = identity,
              indirect_unary_predicate<projected<I, Proj>> Pred>
@@ -1380,7 +1380,7 @@ namespace std {
     template<input_range R, class T, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires indirectly_writable<iterator_t<R>, const T&>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         replace_if(R&& r, Pred pred, const T& new_value, Proj proj = {});
   }
 
@@ -1420,7 +1420,7 @@ namespace std {
       requires indirectly_copyable<iterator_t<R>, O> &&
                indirect_binary_predicate<ranges::equal_to,
                                          projected<iterator_t<R>, Proj>, const T1*>
-      constexpr replace_copy_result<borrowed_iterator_t<R>, O>
+      constexpr replace_copy_result<safe_iterator_t<R>, O>
         replace_copy(R&& r, O result, const T1& old_value, const T2& new_value,
                      Proj proj = {});
 
@@ -1436,7 +1436,7 @@ namespace std {
     template<input_range R, class T, output_iterator<const T&> O, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires indirectly_copyable<iterator_t<R>, O>
-      constexpr replace_copy_if_result<borrowed_iterator_t<R>, O>
+      constexpr replace_copy_if_result<safe_iterator_t<R>, O>
         replace_copy_if(R&& r, O result, Pred pred, const T& new_value,
                         Proj proj = {});
   }
@@ -1458,7 +1458,7 @@ namespace std {
     template<class T, output_iterator<const T&> O, sentinel_for<O> S>
       constexpr O fill(O first, S last, const T& value);
     template<class T, output_range<const T&> R>
-      constexpr borrowed_iterator_t<R> fill(R&& r, const T& value);
+      constexpr safe_iterator_t<R> fill(R&& r, const T& value);
     template<class T, output_iterator<const T&> O>
       constexpr O fill_n(O first, iter_difference_t<O> n, const T& value);
   }
@@ -1483,7 +1483,7 @@ namespace std {
       constexpr O generate(O first, S last, F gen);
     template<class R, copy_constructible F>
       requires invocable<F&> && output_range<R, invoke_result_t<F&>>
-      constexpr borrowed_iterator_t<R> generate(R&& r, F gen);
+      constexpr safe_iterator_t<R> generate(R&& r, F gen);
     template<input_or_output_iterator O, copy_constructible F>
       requires invocable<F&> && indirectly_writable<O, invoke_result_t<F&>>
       constexpr O generate_n(O first, iter_difference_t<O> n, F gen);
@@ -1513,7 +1513,7 @@ namespace std {
       requires permutable<iterator_t<R>> &&
                indirect_binary_predicate<ranges::equal_to,
                                          projected<iterator_t<R>, Proj>, const T*>
-      constexpr borrowed_subrange_t<R>
+      constexpr safe_subrange_t<R>
         remove(R&& r, const T& value, Proj proj = {});
     template<permutable I, sentinel_for<I> S, class Proj = identity,
              indirect_unary_predicate<projected<I, Proj>> Pred>
@@ -1521,7 +1521,7 @@ namespace std {
     template<forward_range R, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires permutable<iterator_t<R>>
-      constexpr borrowed_subrange_t<R>
+      constexpr safe_subrange_t<R>
         remove_if(R&& r, Pred pred, Proj proj = {});
   }
 
@@ -1560,7 +1560,7 @@ namespace std {
       requires indirectly_copyable<iterator_t<R>, O> &&
                indirect_binary_predicate<ranges::equal_to,
                                          projected<iterator_t<R>, Proj>, const T*>
-      constexpr remove_copy_result<borrowed_iterator_t<R>, O>
+      constexpr remove_copy_result<safe_iterator_t<R>, O>
         remove_copy(R&& r, O result, const T& value, Proj proj = {});
 
     template<class I, class O>
@@ -1574,7 +1574,7 @@ namespace std {
     template<input_range R, weakly_incrementable O, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires indirectly_copyable<iterator_t<R>, O>
-      constexpr remove_copy_if_result<borrowed_iterator_t<R>, O>
+      constexpr remove_copy_if_result<safe_iterator_t<R>, O>
         remove_copy_if(R&& r, O result, Pred pred, Proj proj = {});
   }
 
@@ -1599,7 +1599,7 @@ namespace std {
     template<forward_range R, class Proj = identity,
              indirect_equivalence_relation<projected<iterator_t<R>, Proj>> C = ranges::equal_to>
       requires permutable<iterator_t<R>>
-      constexpr borrowed_subrange_t<R>
+      constexpr safe_subrange_t<R>
         unique(R&& r, C comp = {}, Proj proj = {});
   }
 
@@ -1641,7 +1641,7 @@ namespace std {
                (forward_iterator<iterator_t<R>> ||
                 (input_iterator<O> && same_as<range_value_t<R>, iter_value_t<O>>) ||
                 indirectly_copyable_storable<iterator_t<R>, O>)
-      constexpr unique_copy_result<borrowed_iterator_t<R>, O>
+      constexpr unique_copy_result<safe_iterator_t<R>, O>
         unique_copy(R&& r, O result, C comp = {}, Proj proj = {});
   }
 
@@ -1658,7 +1658,7 @@ namespace std {
       constexpr I reverse(I first, S last);
     template<bidirectional_range R>
       requires permutable<iterator_t<R>>
-      constexpr borrowed_iterator_t<R> reverse(R&& r);
+      constexpr safe_iterator_t<R> reverse(R&& r);
   }
 
   template<class BidirectionalIterator, class OutputIterator>
@@ -1681,7 +1681,7 @@ namespace std {
         reverse_copy(I first, S last, O result);
     template<bidirectional_range R, weakly_incrementable O>
       requires indirectly_copyable<iterator_t<R>, O>
-      constexpr reverse_copy_result<borrowed_iterator_t<R>, O>
+      constexpr reverse_copy_result<safe_iterator_t<R>, O>
         reverse_copy(R&& r, O result);
   }
 
@@ -1701,7 +1701,7 @@ namespace std {
       constexpr subrange<I> rotate(I first, I middle, S last);
     template<forward_range R>
       requires permutable<iterator_t<R>>
-      constexpr borrowed_subrange_t<R> rotate(R&& r, iterator_t<R> middle);
+      constexpr safe_subrange_t<R> rotate(R&& r, iterator_t<R> middle);
   }
 
   template<class ForwardIterator, class OutputIterator>
@@ -1724,7 +1724,7 @@ namespace std {
         rotate_copy(I first, I middle, S last, O result);
     template<forward_range R, weakly_incrementable O>
       requires indirectly_copyable<iterator_t<R>, O>
-      constexpr rotate_copy_result<borrowed_iterator_t<R>, O>
+      constexpr rotate_copy_result<safe_iterator_t<R>, O>
         rotate_copy(R&& r, iterator_t<R> middle, O result);
   }
 
@@ -1763,7 +1763,7 @@ namespace std {
     template<random_access_range R, class Gen>
       requires permutable<iterator_t<R>> &&
                uniform_random_bit_generator<remove_reference_t<Gen>>
-      borrowed_iterator_t<R> shuffle(R&& r, Gen&& g);
+      safe_iterator_t<R> shuffle(R&& r, Gen&& g);
   }
 
   // \ref{alg.shift}, shift
@@ -1809,7 +1809,7 @@ namespace std {
         sort(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         sort(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -1833,7 +1833,7 @@ namespace std {
       I stable_sort(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      borrowed_iterator_t<R>
+      safe_iterator_t<R>
         stable_sort(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -1864,7 +1864,7 @@ namespace std {
         partial_sort(I first, I middle, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         partial_sort(R&& r, iterator_t<R> middle, Comp comp = {},
                      Proj proj = {});
   }
@@ -1913,7 +1913,7 @@ namespace std {
                sortable<iterator_t<R2>, Comp, Proj2> &&
                indirect_strict_weak_order<Comp, projected<iterator_t<R1>, Proj1>,
                                           projected<iterator_t<R2>, Proj2>>
-      constexpr partial_sort_copy_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>>
+      constexpr partial_sort_copy_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
         partial_sort_copy(R1&& r, R2&& result_r, Comp comp = {},
                           Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -1963,7 +1963,7 @@ namespace std {
       constexpr I is_sorted_until(I first, S last, Comp comp = {}, Proj proj = {});
     template<forward_range R, class Proj = identity,
              indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         is_sorted_until(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -1991,7 +1991,7 @@ namespace std {
         nth_element(I first, I nth, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         nth_element(R&& r, iterator_t<R> nth, Comp comp = {}, Proj proj = {});
   }
 
@@ -2013,7 +2013,7 @@ namespace std {
     template<forward_range R, class T, class Proj = identity,
              indirect_strict_weak_order<const T*, projected<iterator_t<R>, Proj>> Comp =
                ranges::less>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         lower_bound(R&& r, const T& value, Comp comp = {}, Proj proj = {});
   }
 
@@ -2033,7 +2033,7 @@ namespace std {
     template<forward_range R, class T, class Proj = identity,
              indirect_strict_weak_order<const T*, projected<iterator_t<R>, Proj>> Comp =
                ranges::less>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         upper_bound(R&& r, const T& value, Comp comp = {}, Proj proj = {});
   }
 
@@ -2054,7 +2054,7 @@ namespace std {
     template<forward_range R, class T, class Proj = identity,
              indirect_strict_weak_order<const T*, projected<iterator_t<R>, Proj>> Comp =
                ranges::less>
-      constexpr borrowed_subrange_t<R>
+      constexpr safe_subrange_t<R>
         equal_range(R&& r, const T& value, Comp comp = {}, Proj proj = {});
   }
 
@@ -2113,7 +2113,7 @@ namespace std {
     template<forward_range R, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires permutable<iterator_t<R>>
-      constexpr borrowed_subrange_t<R>
+      constexpr safe_subrange_t<R>
         partition(R&& r, Pred pred, Proj proj = {});
   }
 
@@ -2135,7 +2135,7 @@ namespace std {
     template<bidirectional_range R, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires permutable<iterator_t<R>>
-      borrowed_subrange_t<R> stable_partition(R&& r, Pred pred, Proj proj = {});
+      safe_subrange_t<R> stable_partition(R&& r, Pred pred, Proj proj = {});
   }
 
   template<class InputIterator, class OutputIterator1,
@@ -2168,7 +2168,7 @@ namespace std {
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
       requires indirectly_copyable<iterator_t<R>, O1> &&
                indirectly_copyable<iterator_t<R>, O2>
-      constexpr partition_copy_result<borrowed_iterator_t<R>, O1, O2>
+      constexpr partition_copy_result<safe_iterator_t<R>, O1, O2>
         partition_copy(R&& r, O1 out_true, O2 out_false, Pred pred, Proj proj = {});
   }
 
@@ -2183,7 +2183,7 @@ namespace std {
       constexpr I partition_point(I first, S last, Pred pred, Proj proj = {});
     template<forward_range R, class Proj = identity,
              indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         partition_point(R&& r, Pred pred, Proj proj = {});
   }
 
@@ -2228,7 +2228,7 @@ namespace std {
     template<input_range R1, input_range R2, weakly_incrementable O, class Comp = ranges::less,
              class Proj1 = identity, class Proj2 = identity>
       requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-      constexpr merge_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+      constexpr merge_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
         merge(R1&& r1, R2&& r2, O result,
               Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -2259,7 +2259,7 @@ namespace std {
       I inplace_merge(I first, I middle, S last, Comp comp = {}, Proj proj = {});
     template<bidirectional_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      borrowed_iterator_t<R>
+      safe_iterator_t<R>
         inplace_merge(R&& r, iterator_t<R> middle, Comp comp = {},
                       Proj proj = {});
   }
@@ -2337,7 +2337,7 @@ namespace std {
     template<input_range R1, input_range R2, weakly_incrementable O,
              class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
       requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-      constexpr set_union_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+      constexpr set_union_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
         set_union(R1&& r1, R2&& r2, O result, Comp comp = {},
                   Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -2381,7 +2381,7 @@ namespace std {
     template<input_range R1, input_range R2, weakly_incrementable O,
              class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
       requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-      constexpr set_intersection_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+      constexpr set_intersection_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
         set_intersection(R1&& r1, R2&& r2, O result,
                          Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -2425,7 +2425,7 @@ namespace std {
     template<input_range R1, input_range R2, weakly_incrementable O,
              class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
       requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-      constexpr set_difference_result<borrowed_iterator_t<R1>, O>
+      constexpr set_difference_result<safe_iterator_t<R1>, O>
         set_difference(R1&& r1, R2&& r2, O result,
                        Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -2470,8 +2470,8 @@ namespace std {
     template<input_range R1, input_range R2, weakly_incrementable O,
              class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
       requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-      constexpr set_symmetric_difference_result<borrowed_iterator_t<R1>,
-                                                borrowed_iterator_t<R2>, O>
+      constexpr set_symmetric_difference_result<safe_iterator_t<R1>,
+                                                safe_iterator_t<R2>, O>
         set_symmetric_difference(R1&& r1, R2&& r2, O result, Comp comp = {},
                                  Proj1 proj1 = {}, Proj2 proj2 = {});
   }
@@ -2491,7 +2491,7 @@ namespace std {
         push_heap(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         push_heap(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2509,7 +2509,7 @@ namespace std {
         pop_heap(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         pop_heap(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2527,7 +2527,7 @@ namespace std {
         make_heap(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         make_heap(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2545,7 +2545,7 @@ namespace std {
         sort_heap(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Comp = ranges::less, class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         sort_heap(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2594,7 +2594,7 @@ namespace std {
       constexpr I is_heap_until(I first, S last, Comp comp = {}, Proj proj = {});
     template<random_access_range R, class Proj = identity,
              indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         is_heap_until(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2689,7 +2689,7 @@ namespace std {
       constexpr I min_element(I first, S last, Comp comp = {}, Proj proj = {});
     template<forward_range R, class Proj = identity,
              indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         min_element(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2712,7 +2712,7 @@ namespace std {
       constexpr I max_element(I first, S last, Comp comp = {}, Proj proj = {});
     template<forward_range R, class Proj = identity,
              indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-      constexpr borrowed_iterator_t<R>
+      constexpr safe_iterator_t<R>
         max_element(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2741,7 +2741,7 @@ namespace std {
         minmax_element(I first, S last, Comp comp = {}, Proj proj = {});
     template<forward_range R, class Proj = identity,
              indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-      constexpr minmax_element_result<borrowed_iterator_t<R>>
+      constexpr minmax_element_result<safe_iterator_t<R>>
         minmax_element(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2830,7 +2830,7 @@ namespace std {
     template<bidirectional_range R, class Comp = ranges::less,
              class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr next_permutation_result<borrowed_iterator_t<R>>
+      constexpr next_permutation_result<safe_iterator_t<R>>
         next_permutation(R&& r, Comp comp = {}, Proj proj = {});
   }
 
@@ -2853,7 +2853,7 @@ namespace std {
     template<bidirectional_range R, class Comp = ranges::less,
              class Proj = identity>
       requires sortable<iterator_t<R>, Comp, Proj>
-      constexpr prev_permutation_result<borrowed_iterator_t<R>>
+      constexpr prev_permutation_result<safe_iterator_t<R>>
         prev_permutation(R&& r, Comp comp = {}, Proj proj = {});
   }
 }
@@ -3216,7 +3216,7 @@ template<input_iterator I, sentinel_for<I> S, class Proj = identity,
     ranges::for_each(I first, S last, Fun f, Proj proj = {});
 template<input_range R, class Proj = identity,
          indirectly_unary_invocable<projected<iterator_t<R>, Proj>> Fun>
-  constexpr ranges::for_each_result<borrowed_iterator_t<R>, Fun>
+  constexpr ranges::for_each_result<safe_iterator_t<R>, Fun>
     ranges::for_each(R&& r, Fun f, Proj proj = {});
 \end{itemdecl}
 
@@ -3405,21 +3405,21 @@ template<input_iterator I, sentinel_for<I> S, class T, class Proj = identity>
   constexpr I ranges::find(I first, S last, const T& value, Proj proj = {});
 template<input_range R, class T, class Proj = identity>
   requires indirect_binary_predicate<ranges::equal_to, projected<iterator_t<R>, Proj>, const T*>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::find(R&& r, const T& value, Proj proj = {});
 template<input_iterator I, sentinel_for<I> S, class Proj = identity,
          indirect_unary_predicate<projected<I, Proj>> Pred>
   constexpr I ranges::find_if(I first, S last, Pred pred, Proj proj = {});
 template<input_range R, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::find_if(R&& r, Pred pred, Proj proj = {});
 template<input_iterator I, sentinel_for<I> S, class Proj = identity,
          indirect_unary_predicate<projected<I, Proj>> Pred>
   constexpr I ranges::find_if_not(I first, S last, Pred pred, Proj proj = {});
 template<input_range R, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::find_if_not(R&& r, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -3484,7 +3484,7 @@ template<forward_iterator I1, sentinel_for<I1> S1, forward_iterator I2, sentinel
 template<forward_range R1, forward_range R2,
          class Pred = ranges::equal_to, class Proj1 = identity, class Proj2 = identity>
   requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-  constexpr borrowed_subrange_t<R1>
+  constexpr safe_subrange_t<R1>
     ranges::find_end(R1&& r1, R2&& r2, Pred pred = {},
                      Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -3569,7 +3569,7 @@ template<input_iterator I1, sentinel_for<I1> S1, forward_iterator I2, sentinel_f
 template<input_range R1, forward_range R2,
          class Pred = ranges::equal_to, class Proj1 = identity, class Proj2 = identity>
   requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-  constexpr borrowed_iterator_t<R1>
+  constexpr safe_iterator_t<R1>
     ranges::find_first_of(R1&& r1, R2&& r2,
                           Pred pred = {},
                           Proj1 proj1 = {}, Proj2 proj2 = {});
@@ -3632,7 +3632,7 @@ template<forward_iterator I, sentinel_for<I> S, class Proj = identity,
 template<forward_range R, class Proj = identity,
          indirect_binary_predicate<projected<iterator_t<R>, Proj>,
                                    projected<iterator_t<R>, Proj>> Pred = ranges::equal_to>
-  constexpr borrowed_iterator_t<R> ranges::adjacent_find(R&& r, Pred pred = {}, Proj proj = {});
+  constexpr safe_iterator_t<R> ranges::adjacent_find(R&& r, Pred pred = {}, Proj proj = {});
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -3790,7 +3790,7 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
 template<input_range R1, input_range R2,
          class Pred = ranges::equal_to, class Proj1 = identity, class Proj2 = identity>
   requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-  constexpr ranges::mismatch_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>>
+  constexpr ranges::mismatch_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
     ranges::mismatch(R1&& r1, R2&& r2, Pred pred = {},
                      Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -4105,7 +4105,7 @@ template<forward_iterator I1, sentinel_for<I1> S1, forward_iterator I2,
 template<forward_range R1, forward_range R2, class Pred = ranges::equal_to,
          class Proj1 = identity, class Proj2 = identity>
   requires indirectly_comparable<iterator_t<R1>, iterator_t<R2>, Pred, Proj1, Proj2>
-  constexpr borrowed_subrange_t<R1>
+  constexpr safe_subrange_t<R1>
     ranges::search(R1&& r1, R2&& r2, Pred pred = {},
                    Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -4193,7 +4193,7 @@ template<forward_iterator I, sentinel_for<I> S, class T,
 template<forward_range R, class T, class Pred = ranges::equal_to,
          class Proj = identity>
   requires indirectly_comparable<iterator_t<R>, const T*, Pred, Proj>
-  constexpr borrowed_subrange_t<R>
+  constexpr safe_subrange_t<R>
     ranges::search_n(R&& r, range_difference_t<R> count,
                      const T& value, Pred pred = {}, Proj proj = {});
 \end{itemdecl}
@@ -4246,7 +4246,7 @@ template<input_iterator I, sentinel_for<I> S, weakly_incrementable O>
   constexpr ranges::copy_result<I, O> ranges::copy(I first, S last, O result);
 template<input_range R, weakly_incrementable O>
   requires indirectly_copyable<iterator_t<R>, O>
-  constexpr ranges::copy_result<borrowed_iterator_t<R>, O> ranges::copy(R&& r, O result);
+  constexpr ranges::copy_result<safe_iterator_t<R>, O> ranges::copy(R&& r, O result);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -4374,7 +4374,7 @@ template<input_iterator I, sentinel_for<I> S, weakly_incrementable O, class Proj
 template<input_range R, weakly_incrementable O, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires indirectly_copyable<iterator_t<R>, O>
-  constexpr ranges::copy_if_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::copy_if_result<safe_iterator_t<R>, O>
     ranges::copy_if(R&& r, O result, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -4444,7 +4444,7 @@ template<bidirectional_iterator I1, sentinel_for<I1> S1, bidirectional_iterator 
     ranges::copy_backward(I1 first, S1 last, I2 result);
 template<bidirectional_range R, bidirectional_iterator I>
   requires indirectly_copyable<iterator_t<R>, I>
-  constexpr ranges::copy_backward_result<borrowed_iterator_t<R>, I>
+  constexpr ranges::copy_backward_result<safe_iterator_t<R>, I>
     ranges::copy_backward(R&& r, I result);
 \end{itemdecl}
 
@@ -4496,7 +4496,7 @@ template<input_iterator I, sentinel_for<I> S, weakly_incrementable O>
     ranges::move(I first, S last, O result);
 template<input_range R, weakly_incrementable O>
   requires indirectly_movable<iterator_t<R>, O>
-  constexpr ranges::move_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::move_result<safe_iterator_t<R>, O>
     ranges::move(R&& r, O result);
 \end{itemdecl}
 
@@ -4586,7 +4586,7 @@ template<bidirectional_iterator I1, sentinel_for<I1> S1, bidirectional_iterator 
     ranges::move_backward(I1 first, S1 last, I2 result);
 template<bidirectional_range R, bidirectional_iterator I>
   requires indirectly_movable<iterator_t<R>, I>
-  constexpr ranges::move_backward_result<borrowed_iterator_t<R>, I>
+  constexpr ranges::move_backward_result<safe_iterator_t<R>, I>
     ranges::move_backward(R&& r, I result);
 \end{itemdecl}
 
@@ -4653,7 +4653,7 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
     ranges::swap_ranges(I1 first1, S1 last1, I2 first2, S2 last2);
 template<input_range R1, input_range R2>
   requires indirectly_swappable<iterator_t<R1>, iterator_t<R2>>
-  constexpr ranges::swap_ranges_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>>
+  constexpr ranges::swap_ranges_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
     ranges::swap_ranges(R1&& r1, R2&& r2);
 \end{itemdecl}
 
@@ -4758,7 +4758,7 @@ template<input_iterator I, sentinel_for<I> S, weakly_incrementable O,
 template<input_range R, weakly_incrementable O, copy_constructible F,
          class Proj = identity>
   requires indirectly_writable<O, indirect_result_t<F&, projected<iterator_t<R>, Proj>>>
-  constexpr ranges::unary_transform_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::unary_transform_result<safe_iterator_t<R>, O>
     ranges::transform(R&& r, O result, F op, Proj proj = {});
 template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for<I2> S2,
          weakly_incrementable O, copy_constructible F, class Proj1 = identity,
@@ -4772,7 +4772,7 @@ template<input_range R1, input_range R2, weakly_incrementable O,
          copy_constructible F, class Proj1 = identity, class Proj2 = identity>
   requires indirectly_writable<O, indirect_result_t<F&, projected<iterator_t<R1>, Proj1>,
                                          projected<iterator_t<R2>, Proj2>>>
-  constexpr ranges::binary_transform_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+  constexpr ranges::binary_transform_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
     ranges::transform(R1&& r1, R2&& r2, O result,
                       F binary_op, Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -4878,7 +4878,7 @@ template<input_iterator I, sentinel_for<I> S, class T1, class T2, class Proj = i
 template<input_range R, class T1, class T2, class Proj = identity>
   requires indirectly_writable<iterator_t<R>, const T2&> &&
            indirect_binary_predicate<ranges::equal_to, projected<iterator_t<R>, Proj>, const T1*>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::replace(R&& r, const T1& old_value, const T2& new_value, Proj proj = {});
 template<input_iterator I, sentinel_for<I> S, class T, class Proj = identity,
          indirect_unary_predicate<projected<I, Proj>> Pred>
@@ -4887,7 +4887,7 @@ template<input_iterator I, sentinel_for<I> S, class T, class Proj = identity,
 template<input_range R, class T, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires indirectly_writable<iterator_t<R>, const T&>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::replace_if(R&& r, Pred pred, const T& new_value, Proj proj = {});
 \end{itemdecl}
 
@@ -4961,7 +4961,7 @@ template<input_range R, class T1, class T2, output_iterator<const T2&> O,
          class Proj = identity>
   requires indirectly_copyable<iterator_t<R>, O> &&
            indirect_binary_predicate<ranges::equal_to, projected<iterator_t<R>, Proj>, const T1*>
-  constexpr ranges::replace_copy_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::replace_copy_result<safe_iterator_t<R>, O>
     ranges::replace_copy(R&& r, O result, const T1& old_value, const T2& new_value,
                          Proj proj = {});
 
@@ -4974,7 +4974,7 @@ template<input_iterator I, sentinel_for<I> S, class T, output_iterator<const T&>
 template<input_range R, class T, output_iterator<const T&> O, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires indirectly_copyable<iterator_t<R>, O>
-  constexpr ranges::replace_copy_if_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::replace_copy_if_result<safe_iterator_t<R>, O>
     ranges::replace_copy_if(R&& r, O result, Pred pred, const T& new_value,
                             Proj proj = {});
 \end{itemdecl}
@@ -5052,7 +5052,7 @@ template<class ExecutionPolicy, class ForwardIterator, class Size, class T>
 template<class T, output_iterator<const T&> O, sentinel_for<O> S>
   constexpr O ranges::fill(O first, S last, const T& value);
 template<class T, output_range<const T&> R>
-  constexpr borrowed_iterator_t<R> ranges::fill(R&& r, const T& value);
+  constexpr safe_iterator_t<R> ranges::fill(R&& r, const T& value);
 template<class T, output_iterator<const T&> O>
   constexpr O ranges::fill_n(O first, iter_difference_t<O> n, const T& value);
 \end{itemdecl}
@@ -5107,7 +5107,7 @@ template<input_or_output_iterator O, sentinel_for<O> S, copy_constructible F>
   constexpr O ranges::generate(O first, S last, F gen);
 template<class R, copy_constructible F>
   requires invocable<F&> && output_range<R, invoke_result_t<F&>>
-  constexpr borrowed_iterator_t<R> ranges::generate(R&& r, F gen);
+  constexpr safe_iterator_t<R> ranges::generate(R&& r, F gen);
 template<input_or_output_iterator O, copy_constructible F>
   requires invocable<F&> && indirectly_writable<O, invoke_result_t<F&>>
   constexpr O ranges::generate_n(O first, iter_difference_t<O> n, F gen);
@@ -5164,7 +5164,7 @@ template<permutable I, sentinel_for<I> S, class T, class Proj = identity>
 template<forward_range R, class T, class Proj = identity>
   requires permutable<iterator_t<R>> &&
            indirect_binary_predicate<ranges::equal_to, projected<iterator_t<R>, Proj>, const T*>
-  constexpr borrowed_subrange_t<R>
+  constexpr safe_subrange_t<R>
     ranges::remove(R&& r, const T& value, Proj proj = {});
 template<permutable I, sentinel_for<I> S, class Proj = identity,
          indirect_unary_predicate<projected<I, Proj>> Pred>
@@ -5172,7 +5172,7 @@ template<permutable I, sentinel_for<I> S, class Proj = identity,
 template<forward_range R, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires permutable<iterator_t<R>>
-  constexpr borrowed_subrange_t<R>
+  constexpr safe_subrange_t<R>
     ranges::remove_if(R&& r, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -5258,7 +5258,7 @@ template<input_iterator I, sentinel_for<I> S, weakly_incrementable O, class T,
 template<input_range R, weakly_incrementable O, class T, class Proj = identity>
   requires indirectly_copyable<iterator_t<R>, O> &&
            indirect_binary_predicate<ranges::equal_to, projected<iterator_t<R>, Proj>, const T*>
-  constexpr ranges::remove_copy_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::remove_copy_result<safe_iterator_t<R>, O>
     ranges::remove_copy(R&& r, O result, const T& value, Proj proj = {});
 template<input_iterator I, sentinel_for<I> S, weakly_incrementable O,
          class Proj = identity, indirect_unary_predicate<projected<I, Proj>> Pred>
@@ -5268,7 +5268,7 @@ template<input_iterator I, sentinel_for<I> S, weakly_incrementable O,
 template<input_range R, weakly_incrementable O, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires indirectly_copyable<iterator_t<R>, O>
-  constexpr ranges::remove_copy_if_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::remove_copy_if_result<safe_iterator_t<R>, O>
     ranges::remove_copy_if(R&& r, O result, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -5347,7 +5347,7 @@ template<permutable I, sentinel_for<I> S, class Proj = identity,
 template<forward_range R, class Proj = identity,
          indirect_equivalence_relation<projected<iterator_t<R>, Proj>> C = ranges::equal_to>
   requires permutable<iterator_t<R>>
-  constexpr borrowed_subrange_t<R>
+  constexpr safe_subrange_t<R>
     ranges::unique(R&& r, C comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -5433,7 +5433,7 @@ template<input_range R, weakly_incrementable O, class Proj = identity,
            (forward_iterator<iterator_t<R>> ||
             (input_iterator<O> && same_as<range_value_t<R>, iter_value_t<O>>) ||
             indirectly_copyable_storable<iterator_t<R>, O>)
-  constexpr ranges::unique_copy_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::unique_copy_result<safe_iterator_t<R>, O>
     ranges::unique_copy(R&& r, O result, C comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -5525,7 +5525,7 @@ template<bidirectional_iterator I, sentinel_for<I> S>
   constexpr I ranges::reverse(I first, S last);
 template<bidirectional_range R>
   requires permutable<iterator_t<R>>
-  constexpr borrowed_iterator_t<R> ranges::reverse(R&& r);
+  constexpr safe_iterator_t<R> ranges::reverse(R&& r);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5569,7 +5569,7 @@ template<bidirectional_iterator I, sentinel_for<I> S, weakly_incrementable O>
     ranges::reverse_copy(I first, S last, O result);
 template<bidirectional_range R, weakly_incrementable O>
   requires indirectly_copyable<iterator_t<R>, O>
-  constexpr ranges::reverse_copy_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::reverse_copy_result<safe_iterator_t<R>, O>
     ranges::reverse_copy(R&& r, O result);
 \end{itemdecl}
 
@@ -5658,7 +5658,7 @@ At most \tcode{last - first} swaps.
 \begin{itemdecl}
 template<forward_range R>
   requires permutable<iterator_t<R>>
-  constexpr borrowed_subrange_t<R> ranges::rotate(R&& r, iterator_t<R> middle);
+  constexpr safe_subrange_t<R> ranges::rotate(R&& r, iterator_t<R> middle);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5720,7 +5720,7 @@ Exactly $N$ assignments.
 \begin{itemdecl}
 template<forward_range R, weakly_incrementable O>
   requires indirectly_copyable<iterator_t<R>, O>
-  constexpr ranges::rotate_copy_result<borrowed_iterator_t<R>, O>
+  constexpr ranges::rotate_copy_result<safe_iterator_t<R>, O>
     ranges::rotate_copy(R&& r, iterator_t<R> middle, O result);
 \end{itemdecl}
 
@@ -5833,7 +5833,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Gen>
 template<random_access_range R, class Gen>
   requires permutable<iterator_t<R>> &&
            uniform_random_bit_generator<remove_reference_t<Gen>>
-  borrowed_iterator_t<R> ranges::shuffle(R&& r, Gen&& g);
+  safe_iterator_t<R> ranges::shuffle(R&& r, Gen&& g);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -6066,7 +6066,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Comp = ranges::less,
     ranges::sort(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::sort(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6124,7 +6124,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Comp = ranges::less,
   I ranges::stable_sort(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  borrowed_iterator_t<R>
+  safe_iterator_t<R>
     ranges::stable_sort(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6236,7 +6236,7 @@ twice as many projections.
 \begin{itemdecl}
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::partial_sort(R&& r, iterator_t<R> middle, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6294,7 +6294,7 @@ template<input_range R1, random_access_range R2, class Comp = ranges::less,
            sortable<iterator_t<R2>, Comp, Proj2> &&
            indirect_strict_weak_order<Comp, projected<iterator_t<R1>, Proj1>,
                                       projected<iterator_t<R2>, Proj2>>
-  constexpr ranges::partial_sort_copy_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>>
+  constexpr ranges::partial_sort_copy_result<safe_iterator_t<R1>, safe_iterator_t<R2>>
     ranges::partial_sort_copy(R1&& r, R2&& result_r, Comp comp = {},
                               Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -6463,7 +6463,7 @@ template<forward_iterator I, sentinel_for<I> S, class Proj = identity,
   constexpr I ranges::is_sorted_until(I first, S last, Comp comp = {}, Proj proj = {});
 template<forward_range R, class Proj = identity,
          indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::is_sorted_until(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6552,7 +6552,7 @@ the predicate, and \bigoh{N \log N} swaps, where $N = \tcode{last - first}$.
 \begin{itemdecl}
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::nth_element(R&& r, iterator_t<R> nth, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6600,7 +6600,7 @@ template<forward_iterator I, sentinel_for<I> S, class T, class Proj = identity,
 template<forward_range R, class T, class Proj = identity,
          indirect_strict_weak_order<const T*, projected<iterator_t<R>, Proj>> Comp =
            ranges::less>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::lower_bound(R&& r, const T& value, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6647,7 +6647,7 @@ template<forward_iterator I, sentinel_for<I> S, class T, class Proj = identity,
 template<forward_range R, class T, class Proj = identity,
          indirect_strict_weak_order<const T*, projected<iterator_t<R>, Proj>> Comp =
            ranges::less>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::upper_bound(R&& r, const T& value, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6696,7 +6696,7 @@ template<forward_iterator I, sentinel_for<I> S, class T, class Proj = identity,
 template<forward_range R, class T, class Proj = identity,
          indirect_strict_weak_order<const T*, projected<iterator_t<R>, Proj>> Comp =
            ranges::less>
-  constexpr borrowed_subrange_t<R>
+  constexpr safe_subrange_t<R>
     ranges::equal_range(R&& r, const T& value, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -6845,7 +6845,7 @@ template<permutable I, sentinel_for<I> S, class Proj = identity,
 template<forward_range R, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires permutable<iterator_t<R>>
-  constexpr borrowed_subrange_t<R>
+  constexpr safe_subrange_t<R>
     ranges::partition(R&& r, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -6915,7 +6915,7 @@ template<bidirectional_iterator I, sentinel_for<I> S, class Proj = identity,
 template<bidirectional_range R, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires permutable<iterator_t<R>>
-  borrowed_subrange_t<R> ranges::stable_partition(R&& r, Pred pred, Proj proj = {});
+  safe_subrange_t<R> ranges::stable_partition(R&& r, Pred pred, Proj proj = {});
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -6992,7 +6992,7 @@ template<input_range R, weakly_incrementable O1, weakly_incrementable O2,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
   requires indirectly_copyable<iterator_t<R>, O1> &&
            indirectly_copyable<iterator_t<R>, O2>
-  constexpr ranges::partition_copy_result<borrowed_iterator_t<R>, O1, O2>
+  constexpr ranges::partition_copy_result<safe_iterator_t<R>, O1, O2>
     ranges::partition_copy(R&& r, O1 out_true, O2 out_false, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -7052,7 +7052,7 @@ template<forward_iterator I, sentinel_for<I> S, class Proj = identity,
   constexpr I ranges::partition_point(I first, S last, Pred pred, Proj proj = {});
 template<forward_range R, class Proj = identity,
          indirect_unary_predicate<projected<iterator_t<R>, Proj>> Pred>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::partition_point(R&& r, Pred pred, Proj proj = {});
 \end{itemdecl}
 
@@ -7122,7 +7122,7 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
 template<input_range R1, input_range R2, weakly_incrementable O, class Comp = ranges::less,
          class Proj1 = identity, class Proj2 = identity>
   requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-  constexpr ranges::merge_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+  constexpr ranges::merge_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
     ranges::merge(R1&& r1, R2&& r2, O result,
                   Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -7257,7 +7257,7 @@ Stable\iref{algorithm.stable}.
 \begin{itemdecl}
 template<bidirectional_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  borrowed_iterator_t<R>
+  safe_iterator_t<R>
     ranges::inplace_merge(R&& r, iterator_t<R> middle, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -7387,7 +7387,7 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
 template<input_range R1, input_range R2, weakly_incrementable O,
          class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
   requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-  constexpr ranges::set_union_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+  constexpr ranges::set_union_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
     ranges::set_union(R1&& r1, R2&& r2, O result, Comp comp = {},
                       Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -7482,7 +7482,7 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
 template<input_range R1, input_range R2, weakly_incrementable O,
          class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
   requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-  constexpr ranges::set_intersection_result<borrowed_iterator_t<R1>, borrowed_iterator_t<R2>, O>
+  constexpr ranges::set_intersection_result<safe_iterator_t<R1>, safe_iterator_t<R2>, O>
     ranges::set_intersection(R1&& r1, R2&& r2, O result,
                              Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -7575,7 +7575,7 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
 template<input_range R1, input_range R2, weakly_incrementable O,
          class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
   requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-  constexpr ranges::set_difference_result<borrowed_iterator_t<R1>, O>
+  constexpr ranges::set_difference_result<safe_iterator_t<R1>, O>
     ranges::set_difference(R1&& r1, R2&& r2, O result,
                            Comp comp = {}, Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -7670,8 +7670,8 @@ template<input_iterator I1, sentinel_for<I1> S1, input_iterator I2, sentinel_for
 template<input_range R1, input_range R2, weakly_incrementable O,
          class Comp = ranges::less, class Proj1 = identity, class Proj2 = identity>
   requires mergeable<iterator_t<R1>, iterator_t<R2>, O, Comp, Proj1, Proj2>
-  constexpr ranges::set_symmetric_difference_result<borrowed_iterator_t<R1>,
-                                                    borrowed_iterator_t<R2>, O>
+  constexpr ranges::set_symmetric_difference_result<safe_iterator_t<R1>,
+                                                    safe_iterator_t<R2>, O>
     ranges::set_symmetric_difference(R1&& r1, R2&& r2, O result, Comp comp = {},
                                      Proj1 proj1 = {}, Proj2 proj2 = {});
 \end{itemdecl}
@@ -7773,7 +7773,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Comp = ranges::less,
     ranges::push_heap(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::push_heap(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -7824,7 +7824,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Comp = ranges::less,
     ranges::pop_heap(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::pop_heap(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -7882,7 +7882,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Comp = ranges::less,
     ranges::make_heap(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::make_heap(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -7931,7 +7931,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Comp = ranges::less,
     ranges::sort_heap(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Comp = ranges::less, class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::sort_heap(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -8069,7 +8069,7 @@ template<random_access_iterator I, sentinel_for<I> S, class Proj = identity,
   constexpr I ranges::is_heap_until(I first, S last, Comp comp = {}, Proj proj = {});
 template<random_access_range R, class Proj = identity,
          indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::is_heap_until(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -8355,7 +8355,7 @@ template<forward_iterator I, sentinel_for<I> S, class Proj = identity,
   constexpr I ranges::min_element(I first, S last, Comp comp = {}, Proj proj = {});
 template<forward_range R, class Proj = identity,
          indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::min_element(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -8402,7 +8402,7 @@ template<forward_iterator I, sentinel_for<I> S, class Proj = identity,
   constexpr I ranges::max_element(I first, S last, Comp comp = {}, Proj proj = {});
 template<forward_range R, class Proj = identity,
          indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-  constexpr borrowed_iterator_t<R>
+  constexpr safe_iterator_t<R>
     ranges::max_element(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -8452,7 +8452,7 @@ template<forward_iterator I, sentinel_for<I> S, class Proj = identity,
     ranges::minmax_element(I first, S last, Comp comp = {}, Proj proj = {});
 template<forward_range R, class Proj = identity,
          indirect_strict_weak_order<projected<iterator_t<R>, Proj>> Comp = ranges::less>
-  constexpr ranges::minmax_result<borrowed_iterator_t<R>>
+  constexpr ranges::minmax_result<safe_iterator_t<R>>
     ranges::minmax_element(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -8674,7 +8674,7 @@ template<bidirectional_iterator I, sentinel_for<I> S, class Comp = ranges::less,
 template<bidirectional_range R, class Comp = ranges::less,
          class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr ranges::next_permutation_result<borrowed_iterator_t<R>>
+  constexpr ranges::next_permutation_result<safe_iterator_t<R>>
     ranges::next_permutation(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -8733,7 +8733,7 @@ template<bidirectional_iterator I, sentinel_for<I> S, class Comp = ranges::less,
 template<bidirectional_range R, class Comp = ranges::less,
          class Proj = identity>
   requires sortable<iterator_t<R>, Comp, Proj>
-  constexpr ranges::prev_permutation_result<borrowed_iterator_t<R>>
+  constexpr ranges::prev_permutation_result<safe_iterator_t<R>>
     ranges::prev_permutation(R&& r, Comp comp = {}, Proj proj = {});
 \end{itemdecl}
 
@@ -10235,7 +10235,7 @@ namespace ranges {
     I uninitialized_default_construct(I first, S last);
   template<@\placeholdernc{no-throw-forward-range}@ R>
       requires default_initializable<range_value_t<R>>
-    borrowed_iterator_t<R> uninitialized_default_construct(R&& r);
+    safe_iterator_t<R> uninitialized_default_construct(R&& r);
 }
 \end{itemdecl}
 
@@ -10314,7 +10314,7 @@ namespace ranges {
     I uninitialized_value_construct(I first, S last);
   template<@\placeholdernc{no-throw-forward-range}@ R>
       requires default_initializable<range_value_t<R>>
-    borrowed_iterator_t<R> uninitialized_value_construct(R&& r);
+    safe_iterator_t<R> uninitialized_value_construct(R&& r);
 }
 \end{itemdecl}
 
@@ -10404,7 +10404,7 @@ namespace ranges {
       uninitialized_copy(I ifirst, S1 ilast, O ofirst, S2 olast);
   template<input_range IR, @\placeholdernc{no-throw-forward-range}@ OR>
       requires constructible_from<range_value_t<OR>, range_reference_t<IR>>
-    uninitialized_copy_result<borrowed_iterator_t<IR>, borrowed_iterator_t<OR>>
+    uninitialized_copy_result<safe_iterator_t<IR>, safe_iterator_t<OR>>
       uninitialized_copy(IR&& in_range, OR&& out_range);
 }
 \end{itemdecl}
@@ -10513,7 +10513,7 @@ namespace ranges {
       uninitialized_move(I ifirst, S1 ilast, O ofirst, S2 olast);
   template<input_range IR, @\placeholdernc{no-throw-forward-range}@ OR>
       requires constructible_from<range_value_t<OR>, range_rvalue_reference_t<IR>>
-    uninitialized_move_result<borrowed_iterator_t<IR>, borrowed_iterator_t<OR>>
+    uninitialized_move_result<safe_iterator_t<IR>, safe_iterator_t<OR>>
       uninitialized_move(IR&& in_range, OR&& out_range);
 }
 \end{itemdecl}
@@ -10623,7 +10623,7 @@ namespace ranges {
     I uninitialized_fill(I first, S last, const T& x);
   template<@\placeholdernc{no-throw-forward-range}@ R, class T>
       requires constructible_from<range_value_t<R>, const T&>
-    borrowed_iterator_t<R> uninitialized_fill(R&& r, const T& x);
+    safe_iterator_t<R> uninitialized_fill(R&& r, const T& x);
 }
 \end{itemdecl}
 
@@ -10748,7 +10748,7 @@ namespace ranges {
     constexpr I destroy(I first, S last) noexcept;
   template<@\placeholdernc{no-throw-input-range}@ R>
       requires destructible<range_value_t<R>>
-    constexpr borrowed_iterator_t<R> destroy(R&& r) noexcept;
+    constexpr safe_iterator_t<R> destroy(R&& r) noexcept;
 }
 \end{itemdecl}
 
